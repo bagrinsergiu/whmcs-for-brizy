@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  cancel-previous-workflow:
+    name: Cancel previous workflow
+    runs-on: ubuntu-latest
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+  build_artifact:
+    needs: cancel-previous-workflow
+    name: Build\Deploy artifact
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      # add any other required steps here...
+      - name: Build Artifact
+        #modify the ./bin/build.sh to exclude all files that are not needed for production version
+        run: ./bin/build.sh /tmp/build brizy-${{ github.ref_name }}.zip # change these if needed
+      - name: Deploy to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          aws s3 cp \
+          --region ${{ secrets.AWS_REGION }} \
+          brizy-${{ github.ref_name }}.zip s3://${{ secrets.AWS_BUILD_BUCKET }}
