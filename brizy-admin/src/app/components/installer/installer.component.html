@@ -1,0 +1,179 @@
+<div *ngIf="loadingData" class="loader-component">
+    <div class="loader"><svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"
+            overflow="visible" fill="#3d3ac4">
+            <defs>
+                <rect id="inline" x="15" y="40" width="10" height="20" rx="2" ry="2"></rect>
+            </defs>
+            <use xlink:href="#inline" x="0">
+                <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0s" repeatCount="indefinite">
+                </animate>
+            </use>
+            <use xlink:href="#inline" x="20">
+                <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.25s" repeatCount="indefinite">
+                </animate>
+            </use>
+            <use xlink:href="#inline" x="40">
+                <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.5s" repeatCount="indefinite">
+                </animate>
+            </use>
+            <use xlink:href="#inline" x="60">
+                <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.75s" repeatCount="indefinite">
+                </animate>
+            </use>
+        </svg></div>
+        {{ 'installer.loadingData' | translate }}
+</div>
+
+<!-- Installation box -->
+
+<ng-containter *ngIf="initData">
+    <div class="card">
+        <img class="card-img-top p-3" style="max-height: 100px" [src]="initData.wl.bLogo" alt="{{initData.wl.bPluginName}}">
+        <div class="card-body">
+            <h5 class="card-title">{{initData.wl.bPluginName}} {{ 'installer.titlePartName' | translate }}</h5>
+            <p class="card-text">
+                {{ 'installer.description' | translate: {pluginName: initData.wl.bPluginName} }}
+            </p>
+            <span *ngIf="false"></span>
+            <button (click)="openInstallationModal()" class="btn btn-default btn-sm btn-block mt-1">
+                <i class="fas fa-cog"></i>
+                {{ 'installer.startButton' | translate: {pluginName: initData.wl.bPluginName} }} <span *ngIf="pro == 1"> Pro</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal brizzy-installer-modal " [ngClass]="{'show':  installationModal && !loadingData}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" > {{ 'installer.installationModal.title' | translate: {pluginName: initData.wl.bPluginName} }}</h5>
+                    <button [disabled]="installationStatus === 1" (click)="closeInstallationModal()" type="button"
+                        class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alerts">
+
+                        <div class="alert alert-info" *ngIf="installationStatus === 0">
+                            {{ 'installer.installationModal.initalDescription'| translate }}
+                        </div>
+                        <div class="alert alert-success" *ngIf="installationStatus === 3">
+                            {{ 'installer.installationModal.successDescription'| translate }}
+                            <span *ngIf="advanced.wordpress"> {{ 'installer.installationModal.successDescriptionWordpressPart'| translate }}</span>
+
+                        </div>
+                        <div class="alert alert-danger" *ngIf="installationStatus === 2">
+                            {{ 'installer.installationModal.failedDescription'| translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="installationStatus" class="installation-log">
+                        <p *ngFor="let entry of log" class="entry">
+                            <strong>{{entry.description}}:</strong>
+                            <span *ngIf="entry.response">{{entry.response}}</span>
+                            <span *ngIf="!entry.response"><span class="spinner-grow spinner-grow-sm" role="status"
+                                    aria-hidden="true"></span></span>
+                        </p>
+                    </div>
+                    <div *ngIf="advanced.active" class="form-group advanced-options text-left">
+                        <label for="message-text" class="col-form-label"><strong>{{ 'installer.installationModal.advencedInstalationDescripion'| translate }}</strong></label>
+                        <div class="custom-control custom-checkbox">
+                            <input [(ngModel)]="advanced.wordpress" type="checkbox" class="custom-control-input"
+                                id="advWordpress">
+                            <label class="custom-control-label" for="advWordpress">{{ 'installer.installationModal.wordpressTitle'| translate }}</label>
+                            <small *ngIf="initData.installed.wordpress" class="form-text text-muted">{{ 'installer.installationModal.detectedWordpress'| translate }}</small>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input [(ngModel)]="advanced.brizy" type="checkbox" class="custom-control-input"
+                                id="advBrizy">
+                            <label class="custom-control-label" for="advBrizy">{{ 'installer.installationModal.brizyTitle' | translate: {pluginName: initData.wl.bPluginName} }}</label>
+                            <small *ngIf="initData.installed.brizy" class="form-text text-muted">{{ 'installer.installationModal.detectedBrizy' | translate: {pluginName: initData.wl.bPluginName} }}</small>
+                        </div>
+                        <div *ngIf="pro == 1" class="custom-control custom-checkbox">
+                            <input [(ngModel)]="advanced.brizyPro" type="checkbox" class="custom-control-input"
+                                id="advBrizyPro">
+                            <label class="custom-control-label" for="advBrizyPro">{{ 'installer.installationModal.brizyProTitle' | translate: {pluginName: initData.wl.bPluginName} }}</label>
+                            <small *ngIf="initData.installed.brizyPro" class="form-text text-muted">{{ 'installer.installationModal.detectedBrizyPro' | translate: {pluginName: initData.wl.bPluginName} }}</small>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input [(ngModel)]="advanced.ftp.active" type="checkbox" class="custom-control-input"
+                                id="advFtp">
+                            <label class="custom-control-label" for="advFtp">{{ 'installer.installationModal.ftpOptionDescription'| translate }}</label>
+                        </div>
+                        <div *ngIf="advanced.ftp.active" class="ftp-installation text-left col-12">
+                            <div class="form-row">
+                                <div class="col-md-10">
+                                    <label for="validationDefault01">{{ 'installer.installationModal.host'| translate }}:</label>
+                                    <input type="text" [(ngModel)]="advanced.ftp.host" value="{{advanced.ftp.host}}"
+                                        class="form-control">
+                                </div>
+                                <div class=" col-md-2">
+                                    <label for="validationDefault02">{{ 'installer.installationModal.port'| translate }}:</label>
+                                    <input type="text" #ctrl="ngModel" [(ngModel)]="advanced.ftp.port"
+                                        class="form-control">
+                                </div>
+
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="validationDefault01">{{ 'installer.installationModal.username'| translate }}:</label>
+                                    <input type="text" [(ngModel)]="advanced.ftp.username" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="validationDefault01">{{ 'installer.installationModal.password'| translate }}:</label>
+                                    <input type="text" [(ngModel)]="advanced.ftp.password" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="validationDefault01">{{ 'installer.installationModal.path'| translate }}:</label>
+                                    <input type="text" [(ngModel)]="advanced.ftp.path" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="validationDefault01">{{ 'installer.installationModal.databasePassword'| translate }}:</label>
+                                    <input type="text" [(ngModel)]="advanced.ftp.dbPassword" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="validationDefault01">{{ 'installer.installationModal.databaseName'| translate }}:</label>
+                                    <input type="text" [(ngModel)]="advanced.ftp.dbName" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="validationDefault01">{{ 'installer.installationModal.databaseUser'| translate }}:</label>
+                                    <input type="text" [(ngModel)]="advanced.ftp.dbUser" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group form-check advanced-options-footer">
+                        <input [(ngModel)]="advanced.active" type="checkbox" class="form-check-input"
+                            id="advencedInstallation">
+                        <label class="form-check-label" for="advencedInstallation">{{ 'installer.installationModal.advencedInstalationOptionDescription'| translate }}</label>
+                    </div>
+                    <button type="button" [disabled]="installationStatus === 1" (click)="closeInstallationModal()"
+                        class="btn btn-secondary" data-dismiss="modal">{{ 'installer.installationModal.closeButton'| translate }}</button>
+                    <button type="button" [disabled]="installationStatus === 1" (click)="install()"
+                        class="btn btn-primary">{{ 'installer.installationModal.startButton'| translate }}
+                        <ng-element *ngIf="advanced.active && !advanced.ftp.active">
+                            {{ 'installer.installationModal.startButtonAdvencedPart'| translate }}
+                        </ng-element>
+                        <ng-element *ngIf="advanced.ftp.active">
+                            {{ 'installer.installationModal.startButtonFtpPart'| translate }}
+                        </ng-element>
+                        {{ 'installer.installationModal.startButtonInstallationPart'| translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-containter>

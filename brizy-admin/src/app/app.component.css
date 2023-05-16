@@ -1,0 +1,7 @@
+ngb-modal-window {
+    opacity: 1 !important;
+}
+
+::ng-deep .modal.show {
+    opacity: 1 !important;
+}

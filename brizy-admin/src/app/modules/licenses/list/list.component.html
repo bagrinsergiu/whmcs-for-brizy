@@ -1,0 +1,108 @@
+<h1>Licenses management</h1>
+<app-loader *ngIf="loading">Loading data..</app-loader>
+<div class="search-bar" id="license-add">
+    <div class="simple">
+
+        <div class="row">
+            <div class="col-md-9">
+
+            </div>
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label class="hidden-xs">&nbsp;</label>
+                        <button (click)="refreshList()" class="btn btn-default btn-sm btn-block">
+                            <i class="fas fa-retweet fa-fw"></i>
+                            <span class="hidden-md">
+                                Refresh
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="hidden-xs">&nbsp;</label>
+                        <button (click)="addLicense(newLicense)" class="btn btn-primary btn-sm btn-block">
+                            <i class="fas fa-plus fa-fw"></i>
+                            <span class="hidden-md">
+                                Generate a new license </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="tablebg">
+
+    <table class="datatable brizy-licenses" width="100%">
+        <thead>
+            <tr>
+                <th width="30px" scope="col">#</th>
+                <th scope="col">License</th>
+                <th scope="col">Assigned</th>
+                <th scope="col">Assignment date</th>
+                <th scope="col">Client</th>
+                <th scope="col">Service / Product</th>
+                <th scope="col">Domain</th>
+                <th scope="col">Created</th>
+                <th scope="col">Activation</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let license of licenses; index as i">
+                <td class="text-center">{{i+1}}</td>
+                <td>
+                    {{license.license}}
+                </td>
+                <td class="text-center">
+                    <span *ngIf="!license.user_id" class="badge badge-secondary">Free</span>
+                    <span *ngIf="license.user_id" class="badge badge-success">Assigned</span>
+                </td>
+                <td class="text-center">
+                    <span *ngIf="!license.clientData">-</span>
+                    <span *ngIf="license.clientData">{{license.assigned_at}}</span>
+
+                </td>
+                <td class="text-right">
+                    <span *ngIf="!license.clientData">-</span>
+                    <a target="_blank" href="clientssummary.php?userid={{license.user_id}}"
+                        *ngIf="license.clientData">{{license.clientData.firstname}} {{license.clientData.lastname}}</a>
+                </td>
+                <td class="text-right">
+                    <span *ngIf="!license.serviceData">-</span>
+                    <a target="_blank"
+                        href="clientsservices.php?userid={{license.user_id}}&productselect={{license.service_id}}"
+                        *ngIf="license.serviceData">{{license.serviceData.product.name}}</a>
+                </td>
+                <td class="text-right">
+                    <span *ngIf="!license.serviceData">-</span>
+                    <a target="_blank" href="http://{{license.serviceData.domain}}"
+                        *ngIf="license.serviceData">{{license.serviceData.domain}}</a>
+                </td>
+                <td class="text-center">{{license.created_at}}</td>
+                <td class="text-center">
+                    <span *ngIf="!license.activation_domain">-</span>
+                    <span *ngIf="license.activation_domain">{{license.activation_domain}}</span>
+                </td>
+                <td class="text-center">
+                    <span *ngIf="license.status === 0" class="badge badge-warn">Not synced</span>
+                    <span *ngIf="license.status === 2" class="badge badge-danger">Non active</span>
+                    <span *ngIf="license.status === 1" class="badge badge-success">Active</span>
+                </td>
+                <td class="text-center actions"> <span *ngIf="!license.user_id && license.status !== 1" (click)="deleteLicense(license)"
+                        class="btn btn-sm m-1 btn-danger">Delete</span>
+                    <span *ngIf="license.user_id && license.status === 2" (click)="revokeLicense(license)"
+                        class="btn btn-sm  m-1 btn-warning">Revoke</span>
+                    <span *ngIf="license.status === 1" (click)="disableLicense(license)"
+                        class="btn btn-sm  m-1 btn-warning">Disable</span>
+                </td>
+
+            </tr>
+            <tr *ngIf="!licenses || licenses.length === 0">
+                <td colspan="20" class="text-center">No licenses added</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

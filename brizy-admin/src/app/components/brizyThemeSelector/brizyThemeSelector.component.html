@@ -1,0 +1,74 @@
+<div class="brz-theme-selector">
+    <div class="header-lined">
+        <h1 class="font-size-36">{{ 'themeSelector.header' | translate }}</h1>
+        <h5>{{ 'themeSelector.subHeader' | translate }}</h5>
+
+    </div>
+    <div>
+        <div class="wrap brz-wrap-demodata">
+            <div class="brz-filter" style="padding-left: 20px;">
+                <div class="filter-count">
+                    <span class="count theme-count">{{demos.length}}</span>
+                </div>
+                <ul class="filter-links">
+                    <li><a [ngClass]="{'current ': filters.type == 0}" (click)="filters.type = 0" data-sort=""
+                            class="current js-filter-link">{{ 'themeSelector.all' | translate }}</a></li>
+                    <li><a [ngClass]="{'current ': filters.type == 2}" (click)="filters.type = 2" data-sort="free"
+                            class="js-filter-link">{{ 'themeSelector.free' | translate }}</a></li>
+                    <li><a [ngClass]="{'current ': filters.type == 1}" (click)="filters.type = 1" data-sort="pro"
+                            class="js-filter-link">{{ 'themeSelector.pro' | translate }}</a></li>
+                    <li>
+                        <div class="brz-demo-filter-terms">
+                            <select [(ngModel)]="filters.category" class="select2 "
+                                data-select2-id="select2-data-1-4xh4" tabindex="-1" aria-hidden="true">
+                                <option ngValue="0" data-select2-id="select2-data-3-em92">{{ 'themeSelector.allCategories' | translate }}</option>
+                                <option *ngFor="let category of themes.terms" ngValue="{{category.id}}" value="{{category.id}}">
+                                    {{category.name}}
+                                </option>
+
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+                <form class="search-form">
+                    <label class="screen-reader-text" for="brz-filter-search-input">{{ 'themeSelector.search' | translate }}<</label>
+                    <input [(ngModel)]="filters.phrase" placeholder="Search..." type="search"
+                        aria-describedby="live-search-desc" id="brz-filter-search-input"
+                        class="brz-filter-search js-demo-input-search">
+                </form>
+            </div>
+
+            <div class="theme-browser content-filterable rendered">
+                <div class="themes wp-clearfix">
+                    <div [ngClass]="{'brz-demo-is-pro': theme.pro, 'brz-demo-is-free': !theme.pro, 'selected-theme': theme.id == selectedTheme.id}"
+                        *ngFor="let theme of demos" class="theme">
+                        <div (click)="openPreview(theme)" class="theme-screenshot" style="height: 350px">
+                            <img [src]="theme.photo">
+                        </div>
+                        <span *ngIf="theme.pro" class=" brz-demo-badge">
+                            {{ 'themeSelector.pro' | translate }}
+                        </span>
+                        <span *ngIf="!theme.pro" class="brz-demo-badge">
+                            {{ 'themeSelector.free' | translate }}
+                        </span>
+                        <span (click)="openPreview(theme)" class="more-details"> {{ 'themeSelector.livePreview' | translate }}</span>
+                        <div class="theme-id-container">
+                            <h3 class="theme-name">{{theme.name}}
+                            </h3>
+                            <div *ngIf="theme.id != selectedTheme.id"  class="theme-actions">
+                                <button class="button" (click)="selectTheme(theme)">
+                                    {{ 'themeSelector.select' | translate }}
+                                </button>
+                            </div>
+                            <div *ngIf="theme.id == selectedTheme.id"  class="theme-actions">
+                                <button class="button">
+                                    <img src="/modules/addons/brizy/apps/brizy-admin/assets/tick.svg">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

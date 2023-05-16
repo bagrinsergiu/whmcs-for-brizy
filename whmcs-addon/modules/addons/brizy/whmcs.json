@@ -1,0 +1,31 @@
+{
+    "schema": "1.0",
+    "type": "whmcs-addons",
+    "name": "brizy-addon-module",
+    "license": "MIT",
+    "category": "addon",
+    "description": {
+        "name": "Brizy Addon Module",
+        "tagline": "-",
+        "long": "-",
+        "features": [
+            "-",
+            "-"
+        ]
+    },
+    "logo": {
+        "filename": "https://www.brizy.io/wp-content/uploads/2020/10/Logo-Brizy-Site.svg"
+    },
+    "support": {
+        "homepage": "https:\/\/www.brizy.io\/",
+        "learn_more": "https:\/\/www.brizy.io\/",
+        "email": "hello@brizy.io",
+        "support_url": "https:\/\/www.brizy.io\/",
+        "docs_url": "https:\/\/www.brizy.io\/"
+    },
+    "authors": [{
+        "name": "MSERWIS",
+        "homepage": "https:\/\/www.mserwis.pl\/"
+    }]
+
+}
