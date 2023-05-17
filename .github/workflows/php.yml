@@ -5,15 +5,7 @@ on:
     types: [ published ]
 
 jobs:
-  cancel-previous-workflow:
-    name: Cancel previous workflow
-    runs-on: ubuntu-latest
-    steps:
-      - uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
   build_artifact:
-    needs: cancel-previous-workflow
     name: Build\Deploy artifact
     runs-on: self-hosted
     steps:
@@ -26,10 +18,15 @@ jobs:
         run: cd brizy-admin && rm -rf node_modules && npm install --force
       - name: Build
         run: cd brizy-admin && npm run build:prod
-
+      - name: Generate Archive Name
+        id: archive-name
+        run: |
+            WHMCS_NAME=$(cat ./whmcs-addon/modules/addons/brizy/brizy.php | grep -oP "'name' => '\K(.*)'" | cut -d "'" -f 1)
+            WHMCS_PLUGIN_VERSION=$(cat ./whmcs-addon/modules/addons/brizy/brizy.php | grep -oP "'version' => '\K(.*)'" | cut -d "'" -f 1)
+            echo "ARCHIVE_NAME=${WHMCS_NAME}_${WHMCS_PLUGIN_VERSION}.zip" >> $GITHUB_OUTPUT
       # add any other required steps here...
-      - name: Build Artifact
-        run: ./bin/build.sh  # change these if needed
+      - name: Build archive
+        run: ./bin/build.sh /tmp/build "${{ steps.archive-name.outputs.ARCHIVE_NAME }}" # change these if needed
 
       - name: Deploy to S3
         env:
@@ -39,4 +36,4 @@ jobs:
         run: |
           aws s3 cp \
           --region ${{ secrets.AWS_REGION }} \
-          brizy-${{ github.ref_name }}.zip s3://${{ secrets.AWS_BUILD_BUCKET }}
+          /tmp/build/${{ steps.archive-name.outputs.ARCHIVE_NAME }} s3://${{ secrets.AWS_BUILD_BUCKET }}
