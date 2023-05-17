@@ -21,7 +21,7 @@ function brizy_config()
         'description' => 'Brizy for WHMCS extends the capabilities of WHMCS to remotely install WordPress, Brizy or the Brizy PRO version on shared hosting accounts. Both when creating new orders and using a specially prepared installer for existing customers.',
         'author' => 'DOTINUM.COM',
         'language' => 'english',
-        'version' => '1.0',
+        'version' => '1.01',
         'fields' => [
             'product_name' => [
                 'FriendlyName' => 'Product names',
