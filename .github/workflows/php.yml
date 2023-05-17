@@ -17,12 +17,20 @@ jobs:
     name: Build\Deploy artifact
     runs-on: self-hosted
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install dependencies
+        run: cd brizy-admin && rm -rf node_modules && npm install --force
+      - name: Build
+        run: cd brizy-admin && npm run build:prod
+
       # add any other required steps here...
       - name: Build Artifact
-        #modify the ./bin/build.sh to exclude all files that are not needed for production version
-        run: ./bin/build.sh /tmp/build brizy-${{ github.ref_name }}.zip # change these if needed
+        run: ./bin/build.sh  # change these if needed
+
       - name: Deploy to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
