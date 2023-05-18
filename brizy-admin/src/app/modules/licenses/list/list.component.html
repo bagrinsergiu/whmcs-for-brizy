@@ -93,7 +93,7 @@
                 </td>
                 <td class="text-center actions">
 
-                    <span *ngIf="!license.user_id && license.status !== 1" (click)="deleteLicense(license)"
+                    <span *ngIf="license.status !== 1" (click)="deleteLicense(license)"
                         class="btn btn-sm m-1 btn-danger">Delete</span>
 
                     <span *ngIf="license.user_id && license.status === 2" (click)="revokeLicense(license)"
@@ -101,9 +101,6 @@
 
                     <span *ngIf="license.status === 1" (click)="disableLicense(license)"
                         class="btn btn-sm  m-1 btn-warning">Disable</span>
-
-                    <span *ngIf="license.status !== 0" (click)="deleteLicense(license)"
-                        class="btn btn-sm m-1 btn-danger">Delete</span>
                 </td>
 
             </tr>
