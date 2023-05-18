@@ -91,12 +91,19 @@
                     <span *ngIf="license.status === 2" class="badge badge-danger">Non active</span>
                     <span *ngIf="license.status === 1" class="badge badge-success">Active</span>
                 </td>
-                <td class="text-center actions"> <span *ngIf="!license.user_id && license.status !== 1" (click)="deleteLicense(license)"
+                <td class="text-center actions">
+
+                    <span *ngIf="!license.user_id && license.status !== 1" (click)="deleteLicense(license)"
                         class="btn btn-sm m-1 btn-danger">Delete</span>
+
                     <span *ngIf="license.user_id && license.status === 2" (click)="revokeLicense(license)"
                         class="btn btn-sm  m-1 btn-warning">Revoke</span>
+
                     <span *ngIf="license.status === 1" (click)="disableLicense(license)"
                         class="btn btn-sm  m-1 btn-warning">Disable</span>
+
+                    <span *ngIf="license.status !== 0" (click)="deleteLicense(license)"
+                        class="btn btn-sm m-1 btn-danger">Delete</span>
                 </td>
 
             </tr>
