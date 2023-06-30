@@ -1,4 +1,4 @@
-name: Deploy
+name: Release workflow
 
 on:
   release:
@@ -22,13 +22,16 @@ jobs:
         id: archive-name
         run: |
             WHMCS_NAME=$(cat ./whmcs-addon/modules/addons/brizy/brizy.php | grep -oP "'name' => '\K(.*)'" | cut -d "'" -f 1)
-            WHMCS_PLUGIN_VERSION=$(cat ./whmcs-addon/modules/addons/brizy/brizy.php | grep -oP "'version' => '\K(.*)'" | cut -d "'" -f 1)
+            WHMCS_PLUGIN_VERSION=$(cat ./whmcs-addon/modules/addons/brizy/brizy.php | grep -oP "'version' => '\K(.*)'" | cut -d "'" -f 1 | tr -d v.) 
             echo "ARCHIVE_NAME=${WHMCS_NAME}_${WHMCS_PLUGIN_VERSION}.zip" >> $GITHUB_OUTPUT
-      # add any other required steps here...
       - name: Build archive
         run: ./bin/build.sh /tmp/build "${{ steps.archive-name.outputs.ARCHIVE_NAME }}" # change these if needed
-
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.archive-name.outputs.ARCHIVE_NAME }}
+          path: /tmp/build/${{ steps.archive-name.outputs.ARCHIVE_NAME }}
       - name: Deploy to S3
+        if: "!github.event.release.prerelease"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -37,3 +40,5 @@ jobs:
           aws s3 cp \
           --region ${{ secrets.AWS_REGION }} \
           /tmp/build/${{ steps.archive-name.outputs.ARCHIVE_NAME }} s3://${{ secrets.AWS_BUILD_BUCKET }}
+      - name: Cleanup
+        run: rm -rf /tmp/build
