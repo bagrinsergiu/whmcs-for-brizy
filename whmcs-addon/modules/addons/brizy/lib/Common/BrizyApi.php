@@ -117,6 +117,9 @@ Class BrizyApi {
             // }
 
             return $this->decodeJson($body);
+        } catch (\GuzzleHttp\Exception\ConnectException $ce) {
+            $this->setError('Unable to connect to API');
+            return false;
         } catch (\GuzzleHttp\Exception\RequestException $e) {
 
             $body = (string)$e->getResponse()->getBody();

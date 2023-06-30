@@ -3,6 +3,7 @@
 namespace  WHMCS\Module\Addon\Brizy\Common;
 
 use WHMCS\Database\Capsule;
+use WHMCS\Module\Addon\Brizy\Common\BrizyApi;
 
 /**
  * Helpers
@@ -352,5 +353,44 @@ class Helpers
         }
 
         return null;
+    }
+
+    /**
+     * Validates API connection
+     *
+     * @return boolean
+     */
+    public static function validateApiConnection() {
+        $brizyApi = new BrizyApi();
+        $licensesCheck = $brizyApi->getLicenses();
+      
+        return $licensesCheck !== false ? true : false;
+    }
+
+    /**
+     * Validates Brizy Pro download token
+     *
+     * @return boolean
+     */
+    public static function validateDownloadToken() {
+
+        $downloadToken = trim(Settings::get('brizy_pro_download_token'));
+        $downloadUrl = 'https://www.brizy.cloud/api/licences_download?token=' . $downloadToken;
+
+        $context = stream_context_create(array('http' => ['method' => 'HEAD']));
+        $headers = get_headers($downloadUrl, 1, $context);
+
+        if (!$headers) {
+            return false;
+        }
+        
+        if (
+            isset($headers[0]) && str_contains($headers[0], '200')
+            && isset($headers['Content-Disposition']) && str_contains($headers['Content-Disposition'], 'attachment')
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

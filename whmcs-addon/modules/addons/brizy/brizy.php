@@ -7,6 +7,8 @@ if (!defined("WHMCS")) {
 use WHMCS\Database\Capsule;
 use WHMCS\Module\Addon\Brizy\Admin\AdminDispatcher;
 use WHMCS\Module\Addon\Brizy\Client\ClientDispatcher;
+use WHMCS\Module\Addon\Brizy\Common\Settings;
+use WHMCS\Module\Addon\Brizy\Common\Helpers;
 
 /**
  * Brizy addon module config array.
@@ -15,6 +17,35 @@ use WHMCS\Module\Addon\Brizy\Client\ClientDispatcher;
  */
 function brizy_config()
 {
+
+    $apiTokenDescription = '<span style="color:#ff6000"><a style="text-decoration: underline; color:#ff6000" target="_blank" href="https://www.brizy.io/solutions-for-hosts-and-resellers#lets-talk">Contact us</a> to get the API token in order to provide upgrade to PRO for your costumers, and activate White Label options.</span> <br/>';
+    
+    $apiToken = trim(Settings::get('api_token'));
+
+    if ($apiToken) {
+
+        $apiTokenDescription = '<strong style="color:red">API token is invalid</strong>';
+
+        
+        if (Helpers::validateApiConnection()) {
+            $apiTokenDescription = '<strong style="color:green">API token is valid</strong>';
+
+        }
+    }
+
+    $downloadTokenDescription = '<span style="color:#ff6000"><a style="text-decoration: underline; color:#ff6000" target="_blank" href="https://www.brizy.io/solutions-for-hosts-and-resellers#lets-talk">Contact us</a> to get the download token in order to provide upgrade to PRO for your costumers, and activate White Label options.</span><br/>';
+    $downloadToken = trim(Settings::get('brizy_pro_download_token'));
+
+    if ($downloadToken) {
+
+        $downloadTokenDescription = '<strong style="color:red">Download token is invalid</strong></br>';
+        
+        if (Helpers::validateDownloadToken()) {
+            $downloadTokenDescription = '<strong style="color:green">Download token is valid</strong></br>';
+
+        }
+    }
+
     return [
 
         'name' => 'Brizy',
@@ -41,14 +72,14 @@ function brizy_config()
                 'FriendlyName' => 'Brizy Pro download token',
                 'Type' => 'text',
                 'Size' => '250',
-                'Description' => '<br/>The token is needed to download the Brizy Pro archive',
+                'Description' => '</br>'.$downloadTokenDescription.'The token is needed to download the Brizy Pro archive',
             ],
             'api_token' => [
                 'FriendlyName' => 'API Token',
                 'Type' => 'text',
                 'Size' => '150',
                 'Default' => '',
-                'Description' => '',
+                'Description' => '</br>'.$apiTokenDescription,
             ],
             'company_name' => [
                 'FriendlyName' => 'Company name [WHITE LABEL]',
@@ -99,6 +130,21 @@ function brizy_config()
         ]
     ];
 }
+
+/**
+ * Config validation
+ *
+ * @param array $params
+ * @return void
+ */
+function brizy_config_validate($params) {
+    $valid = false;
+
+    if (!$valid) {
+        throw new InvalidConfiguration('API Key is invalid.');
+    }
+}
+
 
 /**
  * Activate.
