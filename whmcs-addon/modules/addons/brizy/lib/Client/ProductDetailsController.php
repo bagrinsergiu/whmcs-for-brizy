@@ -46,6 +46,8 @@ class ProductDetailsController
         $productName = $service->product->name;
         $orderId = $service->orderId;
         $addonsAvailableToBuy =   Capsule::table('tbladdons')->where('packages', 'LIKE', '%,' . $service->packageid . ',%')->get();
+        $brizyAddonOptions = [];
+
         foreach ($addonsAvailableToBuy as $addon) {
 
             if (in_array($addon->name, $this->productAddons)) {
