@@ -11,7 +11,8 @@
 
             <!-- Brizy Theme Selector START -->
             {assign var=customCss value=\WHMCS\Module\Addon\Brizy\Common\Settings::get('theme_selector_custom_css')}
-            
+
+
             {if $customCss}
                 <style>
                     {$customCss}
@@ -19,10 +20,10 @@
             {/if}
             <app-brizy-theme-selector pro="{(int)\WHMCS\Module\Addon\Brizy\Common\Helpers::isProductBrizyPro($pid)}" product-id="{$pid}"></app-brizy-theme-selector>
 
-            <link rel="stylesheet" href="modules/addons/brizy/apps/brizy-admin/styles.css?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}">
-            <script src="modules/addons/brizy/apps/brizy-admin/runtime.js?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}" defer></script>
-            <script src="modules/addons/brizy/apps/brizy-admin/polyfills.js?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}" defer></script>
-            <script src="modules/addons/brizy/apps/brizy-admin/main.js?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}" defer></script>
+            <link rel="stylesheet" href="{\WHMCS\Module\Addon\Brizy\Common\Settings::getWHMCSDomain()}modules/addons/brizy/apps/brizy-admin/styles.css?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}">
+            <script src="{\WHMCS\Module\Addon\Brizy\Common\Settings::getWHMCSDomain()}modules/addons/brizy/apps/brizy-admin/runtime.js?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}" defer></script>
+            <script src="{\WHMCS\Module\Addon\Brizy\Common\Settings::getWHMCSDomain()}modules/addons/brizy/apps/brizy-admin/polyfills.js?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}" defer></script>
+            <script src="{\WHMCS\Module\Addon\Brizy\Common\Settings::getWHMCSDomain()}modules/addons/brizy/apps/brizy-admin/main.js?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}" defer></script>
             <!-- Brizy Theme Selector END -->
 
             <div class="header-lined">

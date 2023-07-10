@@ -93,7 +93,7 @@
                                         {/if}
                                     {/if}
                                 </div>
-                                <a href="{$product.productUrl}&carttpl=brizy_standard_cart" class="btn btn-success btn-sm btn-order-now" id="{$idPrefix}-order-button"{if $product.hasRecommendations} data-has-recommendations="1"{/if}>
+                                <a href="{\WHMCS\Module\Addon\Brizy\Common\Helpers::forceBrizyTplProdyuctUrl($product.productUrl)}" class="btn btn-success btn-sm btn-order-now" id="{$idPrefix}-order-button"{if $product.hasRecommendations} data-has-recommendations="1"{/if}>
                                     <i class="fas fa-shopping-cart"></i>
                                     {$LANG.ordernowbutton}
                                 </a>

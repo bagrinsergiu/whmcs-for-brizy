@@ -393,4 +393,20 @@ class Helpers
 
         return false;
     }
+    
+    /**
+     * Generates URL to product forcing order template for brizy
+     *
+     * @param string $productUrl
+     * @return string
+     */
+    public static function forceBrizyTplProdyuctUrl($productUrl) {
+        if (strpos($productUrl, '?')) {
+            $productUrl .= '&';
+        } else {
+            $productUrl .= '?';
+        }
+        
+        return $productUrl . 'carttpl=brizy_standard_cart';
+    }
 }

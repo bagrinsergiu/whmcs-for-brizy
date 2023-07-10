@@ -33,4 +33,16 @@ class Settings
         return $returnValue;
     }
 
+    /**
+     * Returns the domain under which whmcs is installed
+     *
+     * @return string
+     */
+    public static function getWHMCSDomain() {
+        $settingsDomain = \WHMCS\Config\Setting::getValue('Domain');
+        if (!$settingsDomain) {
+            return '';
+        }
+        return rtrim($settingsDomain, "/").'/'; ;
+    }
 }
