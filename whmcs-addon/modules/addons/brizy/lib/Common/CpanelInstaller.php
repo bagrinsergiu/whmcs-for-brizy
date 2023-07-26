@@ -26,6 +26,7 @@ class CpanelInstaller
 
     public function __construct($service)
     {
+
         $this->service = $service;
         $this->cpanelAccessData = [
             'host'        =>  $service->serverModel->hostname, // required
@@ -225,6 +226,12 @@ class CpanelInstaller
 
     public function putInstallationScriptOnServer($options = [])
     {
+        $uploadStatus = $this->uploadInstallationFile($options);
+
+        if ($uploadStatus) {
+            return true;
+        }
+
         $content = $this->getInstallationScriptContent($options);
         $fileResponse = $this->cpanel->execute_action(
             3,
@@ -245,34 +252,53 @@ class CpanelInstaller
         return false;
     }
 
-    public function addCronJob()
+    public function uploadInstallationFile($options = [])
     {
-        $command = '/usr/bin/php /home/' . $this->userName . '/public_html/wpi.php';
+        $content = $this->getInstallationScriptContent($options);
+       
+        $results = \localAPI('DecryptPassword', [
+            'password2' => $this->service->password
+        ], '');
 
-        $cronResponse = $this->cpanel->execute_action(
-            2,
-            'Cron',
-            'add_line',
-            $this->userName,
-            [
-                'command' => $command,
-                'day' => '*',
-                'hour' => '*',
-                'minute' => '*/1',
-                'month' => '*',
-                'weekday' => '*'
-            ]
+        if ($results['result'] === 'success') {
+            $userPassword = $results['password'];
+        }
+
+        $file = tempnam(sys_get_temp_dir(), 'POST');
+        file_put_contents($file, $content);
+        if( function_exists( 'curl_file_create' ) ) {
+            $cf = curl_file_create( $file, 'text/plain', 'wpi.php' );
+        } else {
+            $cf = "@/".$file."; filename=wpi.php";
+        }
+
+        $payload = array(
+            'dir'    => '/home/' . $this->userName . '/public_html',
+            'file-1' => $cf
         );
 
-        if (
-            !isset($cronResponse['cpanelresult']['event']['result'])
-            || $cronResponse['cpanelresult']['event']['result'] !== 1) {
+        $cpanelHost = $this->service->serverModel->hostname;
+        $requestUri = "https://" . $cpanelHost.":2083/execute/Fileman/upload_files";
+        $ch = curl_init( $requestUri );
+        curl_setopt( $ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
+        curl_setopt( $ch, CURLOPT_USERPWD, $this->service->username . ':' . $userPassword );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt( $ch, CURLOPT_POST, true );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+        $curlResponse = curl_exec( $ch );
+
+        $response = json_decode( $curlResponse );
+        if( empty( $response ) ) {
+            return false;
+        } elseif ( !$response->status ) {
             return false;
         }
 
         return true;
     }
-
 
     public function checkIfWpInstalled() {
         $fileResponse = $this->cpanel->execute_action(
