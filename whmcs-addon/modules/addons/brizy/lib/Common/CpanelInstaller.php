@@ -300,6 +300,34 @@ class CpanelInstaller
         return true;
     }
 
+    public function addCronJob()
+    {
+        $command = '/usr/bin/php /home/' . $this->userName . '/public_html/wpi.php';
+
+        $cronResponse = $this->cpanel->execute_action(
+            2,
+            'Cron',
+            'add_line',
+            $this->userName,
+            [
+                'command' => $command,
+                'day' => '*',
+                'hour' => '*',
+                'minute' => '*/1',
+                'month' => '*',
+                'weekday' => '*'
+            ]
+        );
+
+        if (
+            !isset($cronResponse['cpanelresult']['event']['result'])
+            || $cronResponse['cpanelresult']['event']['result'] !== 1) {
+            return false;
+        }
+
+        return true;
+    }
+    
     public function checkIfWpInstalled() {
         $fileResponse = $this->cpanel->execute_action(
             3,
