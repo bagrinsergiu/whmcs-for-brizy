@@ -60,6 +60,8 @@ class ProductDetailsController
         ->where('user_id', 0)
         ->count();
 
+        $this->smarty->assign('hasAssignedBrizyLicense', Helpers::checkIfBrizyLicenseAssigned($service->id));
+        $this->smarty->assign('canInstallFree', Helpers::checkIfCanInstallBrizyFree($service->id));
         $this->smarty->assign('canInstallPro', Helpers::checkIfCanInstallBrizyPro($service->id));
         $this->smarty->assign('orderId', $orderId);
         $this->smarty->assign('brizyAddonOptions', $brizyAddonOptions);

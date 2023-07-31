@@ -54,8 +54,15 @@ function brizy_config()
         'language' => 'english',
         'version' => '1.02',
         'fields' => [
+            'product_name_free' => [
+                'FriendlyName' => 'Product names for the FREE version',
+                'Type' => 'text',
+                'Size' => '250',
+                'Default' => '',
+                'Description' => '<br/>Your builder product  name, required for Brizy FREE installation (each product addon name should be separated with ",", for example: "Brizy Pro Hosting,Brizy Pro Hosting #2") ',
+            ],
             'product_name' => [
-                'FriendlyName' => 'Product names',
+                'FriendlyName' => 'Product names for the PRO version',
                 'Type' => 'text',
                 'Size' => '250',
                 'Default' => '',

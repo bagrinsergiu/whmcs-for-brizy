@@ -39,7 +39,7 @@ class Settings
      * @return string
      */
     public static function getWHMCSDomain() {
-        $settingsDomain = \WHMCS\Config\Setting::getValue('Domain');
+        $settingsDomain = \WHMCS\Config\Setting::getValue('SystemURL');
         if (!$settingsDomain) {
             return '';
         }

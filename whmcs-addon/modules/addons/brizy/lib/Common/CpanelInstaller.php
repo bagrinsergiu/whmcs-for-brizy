@@ -36,6 +36,8 @@ class CpanelInstaller
         ];
 
         $this->cpanel = new Cpanel($this->cpanelAccessData);
+        $this->cpanel->setTimeout(30);
+        
         $this->userName = $service->username;
         $this->databaseName = $this->userName . '_' . 'wp';
 

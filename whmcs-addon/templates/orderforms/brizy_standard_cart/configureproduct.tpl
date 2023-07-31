@@ -33,20 +33,22 @@ var _localLang = {
                         <div class="product-info">
                             <p class="product-title">{$productinfo.name}</p>
                             <p>{$productinfo.description}</p>
+                            <!-- Brizy START-->
+                            {if \class_exists('\WHMCS\Module\Addon\Brizy\Common\Settings')}
+                                
+                                {assign var=brzData value=\WHMCS\Module\Addon\Brizy\Common\Session::get()}
+                                {assign var=foundAddonBrizyPro value=\WHMCS\Module\Addon\Brizy\Common\Helpers::checkAllAddonsIfBrizyPro($addons)}
+                                {assign var=addonRquired value=($foundAddonBrizyPro && $brzData['theme_pro']) }
 
-                            {assign var=brzData value=\WHMCS\Module\Addon\Brizy\Common\Session::get()}
-                            {assign var=foundAddonBrizyPro value=\WHMCS\Module\Addon\Brizy\Common\Helpers::checkAllAddonsIfBrizyPro($addons)}
-                            {assign var=addonRquired value=($foundAddonBrizyPro && $brzData['theme_pro']) }
+                                {if isset($brzData['theme_id']) && isset($brzData['theme_name']) && isset($brzData['theme_pro'])}
+                                    <p>Your chosen site theme:  {$brzData['theme_name']}</p>
 
-                            {if isset($brzData['theme_id']) && isset($brzData['theme_name']) && isset($brzData['theme_pro'])}
-                                <p>Your chosen site theme:  {$brzData['theme_name']}</p>
-
-                                {if $addonRquired}
-                                    <p>This is the PRO version therefore an add-on is required for this product.</p>
+                                    {if $addonRquired}
+                                        <p>This is the PRO version therefore an add-on is required for this product.</p>
+                                    {/if}
                                 {/if}
                             {/if}
-
-
+                            <!-- Brizy END-->
                         </div>
 
                         <div class="alert alert-danger w-hidden" role="alert" id="containerProductValidationErrors">
@@ -312,8 +314,13 @@ var _localLang = {
 
                                 <div class="row addon-products">
                                     {foreach $addons as $addon}
-                                        {assign var=brzAddonToSet value=($brzData.theme_pro && $addonRquired &&  \WHMCS\Module\Addon\Brizy\Common\Helpers::checkIfAddonIsBrizyPro($addon.name))}
 
+                                        {if \class_exists('\WHMCS\Module\Addon\Brizy\Common\Settings')}
+                                            {assign var=brzAddonToSet value=($brzData.theme_pro && $addonRquired &&  \WHMCS\Module\Addon\Brizy\Common\Helpers::checkIfAddonIsBrizyPro($addon.name))}
+                                        {else}
+                                            {assign var=brzAddonToSet value=false}
+                                        {/if}
+                                        
                                         <div class="col-sm-{if count($addons) > 1}6{else}12{/if}">
                                             <div class="panel card panel-default panel-addon{if $addon.status} panel-addon-selected{/if} {if $brzAddonToSet}brz-addon{/if}" {if $brzAddonToSet}style="pointer-events:none;"{/if}>
                                                 <div class="panel-body card-body">
