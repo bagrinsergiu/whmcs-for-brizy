@@ -8,6 +8,15 @@
 
                 <app-brizy-installer class="col-xl-4 col-md-6 col-xs-12" pro="{if $canInstallPro}1{else}0{/if}"
                     service-id="{$serviceId}">
+                    <span id="builder-loader"> Module loading... <span>
+                    <script>
+                        setTimeout(() => {
+                            const builderLoader =  document.getElementById('builder-loader');
+                            if (builderLoader) {
+                                builderLoader.innerHTML = 'Failed to load the module, please contact the administrator.'
+                            }
+                        }, 5000)
+                    </script>
                 </app-brizy-installer>
 
                 {if !$canInstallPro && is_array(brizyAddonOptions) && count($brizyAddonOptions) > 0 && $freeLicenses > 0}
@@ -50,4 +59,4 @@
         <script src="modules/addons/brizy/apps/brizy-admin/polyfills.js?h={$hash}" defer></script>
         <script src="modules/addons/brizy/apps/brizy-admin/main.js?h={$hash}" defer></script>
     </div>
-{/if}   
+{/if}

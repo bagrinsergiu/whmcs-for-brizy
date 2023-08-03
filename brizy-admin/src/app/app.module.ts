@@ -86,7 +86,9 @@ export class AppModule {
 
     constructor(private injector: Injector) {
         const elInstaller = createCustomElement(InstallerComponent, { injector });
-        customElements.define('app-brizy-installer', elInstaller);
+        setTimeout(()=>{
+            customElements.define('app-brizy-installer', elInstaller);
+        }, 1500);
 
         const elThemeSelector = createCustomElement(BrizyThemeSelectorComponent, { injector });
         customElements.define('app-brizy-theme-selector', elThemeSelector);

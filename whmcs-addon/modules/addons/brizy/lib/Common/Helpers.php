@@ -26,6 +26,47 @@ class Helpers
     const LICENSE_STATUS_NOT_SYNCED = 0;
 
 
+    /**
+     * Returns whether the client has a license assigned to the service.
+     *
+     * @param integer $serviceId
+     * @return boolean
+     */
+    public static function checkIfBrizyLicenseAssigned($serviceId) {
+        $currentUser =  new \WHMCS\Authentication\CurrentUser;
+        $userData = $currentUser->user();
+
+        $license = Capsule::table('brizy_licenses')
+            ->where('service_id', $serviceId)
+            ->where('user_id', $userData->id)
+            ->first();
+
+        return $license ? true : false;
+    }
+
+
+    /**
+     * Returns whether the customer can install Brizy Pro
+     *
+     * @param integer $serviceId
+     * @return boolean
+     */
+    public static function checkIfCanInstallBrizyFree($serviceId) {
+
+        $service = \WHMCS\Service\Service::where('id', $serviceId)
+            ->first();
+
+        $productBrizyPro = array_map('trim', explode(',', Settings::get('product_name_free')));
+
+        if (in_array($service->product->name, $productBrizyPro)) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+
 
     /**
      * Returns whether the product can install brizy pro
@@ -272,10 +313,10 @@ class Helpers
      * @return void
      */
     public static function synchronizeLicenses($licenses) {
-        
+
         if ($licenses && is_array($licenses)) {
             foreach ($licenses as $license) {
-                
+
                    self::syncSingleLicense($license);
             }
         }
@@ -363,7 +404,7 @@ class Helpers
     public static function validateApiConnection() {
         $brizyApi = new BrizyApi();
         $licensesCheck = $brizyApi->getLicenses();
-      
+
         return $licensesCheck !== false ? true : false;
     }
 
@@ -383,7 +424,7 @@ class Helpers
         if (!$headers) {
             return false;
         }
-        
+
         if (
             isset($headers[0]) && str_contains($headers[0], '200')
             && isset($headers['Content-Disposition']) && str_contains($headers['Content-Disposition'], 'attachment')
@@ -393,7 +434,7 @@ class Helpers
 
         return false;
     }
-    
+
     /**
      * Generates URL to product forcing order template for brizy
      *
@@ -406,7 +447,7 @@ class Helpers
         } else {
             $productUrl .= '?';
         }
-        
+
         return $productUrl . 'carttpl=brizy_standard_cart';
     }
 }
