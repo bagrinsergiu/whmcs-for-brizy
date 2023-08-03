@@ -19,14 +19,14 @@ function brizy_config()
 {
 
     $apiTokenDescription = '<span style="color:#ff6000"><a style="text-decoration: underline; color:#ff6000" target="_blank" href="https://www.brizy.io/solutions-for-hosts-and-resellers#lets-talk">Contact us</a> to get the API token in order to provide upgrade to PRO for your costumers, and activate White Label options.</span> <br/>';
-    
+
     $apiToken = trim(Settings::get('api_token'));
 
     if ($apiToken) {
 
         $apiTokenDescription = '<strong style="color:red">API token is invalid</strong>';
 
-        
+
         if (Helpers::validateApiConnection()) {
             $apiTokenDescription = '<strong style="color:green">API token is valid</strong>';
 
@@ -39,7 +39,7 @@ function brizy_config()
     if ($downloadToken) {
 
         $downloadTokenDescription = '<strong style="color:red">Download token is invalid</strong></br>';
-        
+
         if (Helpers::validateDownloadToken()) {
             $downloadTokenDescription = '<strong style="color:green">Download token is valid</strong></br>';
 
@@ -52,7 +52,7 @@ function brizy_config()
         'description' => 'Brizy for WHMCS extends the capabilities of WHMCS to remotely install WordPress, Brizy or the Brizy PRO version on shared hosting accounts. Both when creating new orders and using a specially prepared installer for existing customers.',
         'author' => 'DOTINUM.COM',
         'language' => 'english',
-        'version' => '1.02',
+        'version' => '1.03',
         'fields' => [
             'product_name_free' => [
                 'FriendlyName' => 'Product names for the FREE version',
