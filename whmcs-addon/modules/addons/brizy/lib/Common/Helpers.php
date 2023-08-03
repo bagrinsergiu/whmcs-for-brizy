@@ -93,6 +93,27 @@ class Helpers
         return false;
     }
 
+    /**
+     * Returns whether the product can install brizy free
+     *
+     * @param integer $productId
+     * @return boolean
+     */
+    public static function isProductBrizyFree($productId) {
+        $product = \WHMCS\Product\Product::where('id', $productId)
+        ->first();
+
+        if ($product) {
+
+            $productBrizyFree = array_map('trim', explode(',', Settings::get('product_name_free')));
+
+            if (in_array($product->name, $productBrizyFree)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public static function getBrizyProProductAddon($productId){
         $product = \WHMCS\Product\Product::where('id', $productId)

@@ -211,7 +211,7 @@ class WpInstaller
         }
 
         require_once(ABSPATH . '/wp-content/plugins/brizy/brizy.php');
-        
+
         if (class_exists('Brizy_Import_Import')) {
             $import = new Brizy_Import_Import($this->brizyTheme);
 
@@ -251,7 +251,7 @@ class WpInstaller
         if ($this->brizy) {
             $this->downloadTheme();
         }
-        
+
         return is_plugin_active($pluginPath);
     }
 
