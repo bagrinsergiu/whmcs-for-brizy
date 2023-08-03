@@ -30,7 +30,7 @@ class CpanelInstaller
         $this->service = $service;
         $this->cpanelAccessData = [
             'host'        =>  $service->serverModel->hostname, // required
-            'username'    =>   $service->serverModel->username, // required
+            'username'    =>  $service->serverModel->username, // required
             'auth_type'   =>  'hash', // optional, default 'hash'
             'password'    =>  $service->serverModel->accesshash, // required
         ];
@@ -85,8 +85,7 @@ class CpanelInstaller
             $this->updateInstallationDbData([
                 'db_pass' => $results['password']
             ]);
-        }
-
+        }      
     }
 
     public function checkIfDbExists()
@@ -234,6 +233,12 @@ class CpanelInstaller
             return true;
         }
 
+        $updateStatus = $this->updateInstallationFile($options);
+        
+        if ($updateStatus) {
+            return true;
+        }
+
         $content = $this->getInstallationScriptContent($options);
         $fileResponse = $this->cpanel->execute_action(
             3,
@@ -254,18 +259,34 @@ class CpanelInstaller
         return false;
     }
 
+    
+    public function updateInstallationFile($options = [])
+    {
+        $content = $this->getInstallationScriptContent($options);
+
+        $payload = [
+            'file' => 'wpi.php',
+            'content' => $content,
+            'dir' => '/home/' . $this->userName . '/public_html'
+        ];
+
+        $cpanelHost = $this->service->serverModel->hostname;
+        $requestUri = "https://" . $cpanelHost.":2083/execute/Fileman/save_file_content";
+        $rawResponse = $this->webApiRequest($requestUri, $payload);
+
+        $response = json_decode($rawResponse);
+        if (empty( $response )) {
+            return false;
+        } elseif ( !$response->status ) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function uploadInstallationFile($options = [])
     {
         $content = $this->getInstallationScriptContent($options);
-       
-        $results = \localAPI('DecryptPassword', [
-            'password2' => $this->service->password
-        ], '');
-
-        if ($results['result'] === 'success') {
-            $userPassword = $results['password'];
-        }
-
         $file = tempnam(sys_get_temp_dir(), 'POST');
         file_put_contents($file, $content);
         if( function_exists( 'curl_file_create' ) ) {
@@ -280,20 +301,13 @@ class CpanelInstaller
         );
 
         $cpanelHost = $this->service->serverModel->hostname;
+        
         $requestUri = "https://" . $cpanelHost.":2083/execute/Fileman/upload_files";
-        $ch = curl_init( $requestUri );
-        curl_setopt( $ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
-        curl_setopt( $ch, CURLOPT_USERPWD, $this->service->username . ':' . $userPassword );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-        curl_setopt( $ch, CURLOPT_POST, true );
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+       
+        $rawResponse = $this->webApiRequest($requestUri, $payload);
 
-        $curlResponse = curl_exec( $ch );
-
-        $response = json_decode( $curlResponse );
-        if( empty( $response ) ) {
+        $response = json_decode($rawResponse);
+        if (empty( $response )) {
             return false;
         } elseif ( !$response->status ) {
             return false;
@@ -301,6 +315,44 @@ class CpanelInstaller
 
         return true;
     }
+
+    public function runInstallationFile() {
+
+        $ch = curl_init('http://'.$this->service->serverModel->ipaddress.'/wpi.php');
+
+        $header = array
+        (
+            "Host: " . $this->service->domain,
+            "Cache-Control: max-age=0",
+            "Connection: keep-alive",
+        );
+
+        $maxAttempts  = 15;
+        $waitingBetweenAttempts = 3;
+
+        for ($i = 1; $i <= $maxAttempts; $i++) {
+            
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false );
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false );
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_NOBODY, true); 
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); 
+            curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+            $result = curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($code == 200) {
+                return true;
+            }  
+
+            sleep($waitingBetweenAttempts);
+        }
+      
+        return false;
+    } 
 
     public function addCronJob()
     {
@@ -330,6 +382,25 @@ class CpanelInstaller
         return true;
     }
     
+    public function checkIfAnotherSiteInstalled() {
+        $fileResponse = $this->cpanel->execute_action(
+            3,
+            'Fileman',
+            'get_file_information',
+            $this->userName,
+            [
+                'path' => '/home/' . $this->userName . '/public_html/index.php'
+            ]
+        );
+
+
+        if (isset($fileResponse['result']['data']['file'])) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function checkIfWpInstalled() {
         $fileResponse = $this->cpanel->execute_action(
             3,
@@ -407,14 +478,6 @@ class CpanelInstaller
         return $password;
     }
 
-
-    /**
-     * Options setter
-     *
-     * @param string $param
-     * @param string $value
-     * @return void
-     */
     public function setOptions($param, $value) {
         if (array_key_exists( $param, $this->options)){
             $this->options[$param] = $value;
@@ -443,7 +506,11 @@ class CpanelInstaller
     
             $script = $this->putInstallationScriptOnServer($replace);
     
-            $cronJob = $this->addCronJob();
+            $runStatus = $this->runInstallationFile();
+            if (!$runStatus) {
+                $cronJob = $this->addCronJob();
+            }
+          
         }
       
     }
@@ -457,5 +524,30 @@ class CpanelInstaller
         return $updatedCount;
     }
 
+    private function webApiRequest($url, $payload) {
+
+        $results = \localAPI('DecryptPassword', [
+            'password2' => $this->service->password
+        ], '');
+
+        if ($results['result'] === 'success') {
+            $userPassword = $results['password'];
+        }
+        
+        $ch = curl_init( $url );
+        curl_setopt( $ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
+        curl_setopt( $ch, CURLOPT_USERPWD, $this->service->username . ':' . $userPassword );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt( $ch, CURLOPT_POST, true );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+        $curlResponse = curl_exec( $ch );
+
+        return $curlResponse;
+    }
+
+   
 
 }

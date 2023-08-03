@@ -125,7 +125,15 @@ class ApiController extends DefaultApiController
      */
     public function addCronJob()
     {
+
+        $runStatus = $this->cpanelInstaller->runInstallationFile();
+
+        if ($runStatus) {
+            $this->respond();
+        }
+
         $status = $this->cpanelInstaller->addCronJob();
+                
         if ($status) {
             $this->respond();
         }
