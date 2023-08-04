@@ -275,9 +275,9 @@ class CpanelInstaller
         $rawResponse = $this->webApiRequest($requestUri, $payload);
 
         $response = json_decode($rawResponse);
-        if (empty( $response )) {
+        if (empty($response)) {
             return false;
-        } elseif ( !$response->status ) {
+        } elseif (!$response->status) {
             return false;
         }
 
@@ -289,27 +289,27 @@ class CpanelInstaller
         $content = $this->getInstallationScriptContent($options);
         $file = tempnam(sys_get_temp_dir(), 'POST');
         file_put_contents($file, $content);
-        if( function_exists( 'curl_file_create' ) ) {
-            $cf = curl_file_create( $file, 'text/plain', 'wpi.php' );
+
+        if (function_exists('curl_file_create')) {
+            $cf = curl_file_create($file, 'text/plain', 'wpi.php');
         } else {
             $cf = "@/".$file."; filename=wpi.php";
         }
 
-        $payload = array(
+        $payload = [
             'dir'    => '/home/' . $this->userName . '/public_html',
             'file-1' => $cf
-        );
+        ];
 
         $cpanelHost = $this->service->serverModel->hostname;
-        
         $requestUri = "https://" . $cpanelHost.":2083/execute/Fileman/upload_files";
        
         $rawResponse = $this->webApiRequest($requestUri, $payload);
 
         $response = json_decode($rawResponse);
-        if (empty( $response )) {
+        if (empty($response)) {
             return false;
-        } elseif ( !$response->status ) {
+        } elseif (!$response->status) {
             return false;
         }
 
@@ -320,12 +320,11 @@ class CpanelInstaller
 
         $ch = curl_init('http://'.$this->service->serverModel->ipaddress.'/wpi.php');
 
-        $header = array
-        (
+        $header = [
             "Host: " . $this->service->domain,
             "Cache-Control: max-age=0",
             "Connection: keep-alive",
-        );
+        ];
 
         $maxAttempts  = 15;
         $waitingBetweenAttempts = 3;
