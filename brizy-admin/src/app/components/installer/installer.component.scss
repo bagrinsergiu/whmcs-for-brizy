@@ -1,6 +1,8 @@
 .brizzy-installer-modal {
   &.show {
     display: block;
+    opacity: 1;
+    visibility: visible;
   }
 
   .installation-log {

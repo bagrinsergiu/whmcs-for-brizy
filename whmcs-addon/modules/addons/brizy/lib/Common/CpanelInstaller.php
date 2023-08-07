@@ -267,7 +267,7 @@ class CpanelInstaller
         $payload = [
             'file' => 'wpi.php',
             'content' => $content,
-            'dir' => '/home/' . $this->userName . '/public_html'
+            'dir' => '/public_html'
         ];
 
         $cpanelHost = $this->service->serverModel->hostname;
@@ -297,7 +297,7 @@ class CpanelInstaller
         }
 
         $payload = [
-            'dir'    => '/home/' . $this->userName . '/public_html',
+            'dir'    => '/public_html',
             'file-1' => $cf
         ];
 

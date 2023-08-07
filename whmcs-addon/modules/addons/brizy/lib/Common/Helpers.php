@@ -46,7 +46,7 @@ class Helpers
 
 
     /**
-     * Returns whether the customer can install Brizy Pro
+     * Returns whether the customer can install Brizy Free
      *
      * @param integer $serviceId
      * @return boolean
@@ -56,9 +56,9 @@ class Helpers
         $service = \WHMCS\Service\Service::where('id', $serviceId)
             ->first();
 
-        $productBrizyPro = array_map('trim', explode(',', Settings::get('product_name_free')));
+        $productBrizyFree = array_map('trim', explode(',', Settings::get('product_name_free')));
 
-        if (in_array($service->product->name, $productBrizyPro)) {
+        if (in_array($service->product->name, $productBrizyFree)) {
 
             return true;
         }
