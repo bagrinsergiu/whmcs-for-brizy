@@ -16,6 +16,7 @@ class CpanelInstaller
     private $cpanel;
     private $tmpInstallationFile;
     private $installationDbData;
+    private $userHomeDirectory; 
 
     private $options = [
         'wordpress' => true,
@@ -40,6 +41,8 @@ class CpanelInstaller
         
         $this->userName = $service->username;
         $this->databaseName = $this->userName . '_' . 'wp';
+        $this->userHomeDirectory = $this->getUserHomeDirectory();
+
 
         $this->tmpInstallationFile = dirname(__FILE__) . '/wpi.php';
 
@@ -248,7 +251,7 @@ class CpanelInstaller
             [
                 'file' => 'wpi.php',
                 'content' => $content,
-                'dir' => '/home/' . $this->userName . '/public_html'
+                'dir' => $this->userHomeDirectory . '/' . $this->userName . '/public_html'
             ]
         );
 
@@ -355,7 +358,7 @@ class CpanelInstaller
 
     public function addCronJob()
     {
-        $command = '/usr/bin/php /home/' . $this->userName . '/public_html/wpi.php';
+        $command = '/usr/bin/php ' . $this->userHomeDirectory . '/public_html/wpi.php';
 
         $cronResponse = $this->cpanel->execute_action(
             2,
@@ -388,7 +391,7 @@ class CpanelInstaller
             'get_file_information',
             $this->userName,
             [
-                'path' => '/home/' . $this->userName . '/public_html/index.php'
+                'path' => $this->userHomeDirectory . '/public_html/index.php'
             ]
         );
 
@@ -407,7 +410,7 @@ class CpanelInstaller
             'get_file_information',
             $this->userName,
             [
-                'path' => '/home/' . $this->userName . '/public_html/wp-admin/admin.php'
+                'path' => $this->userHomeDirectory . '/public_html/wp-admin/admin.php'
             ]
         );
 
@@ -426,7 +429,7 @@ class CpanelInstaller
             'get_file_information',
             $this->userName,
             [
-                'path' => '/home/' . $this->userName . '/public_html/wp-content/plugins/brizy/brizy.php'
+                'path' => $this->userHomeDirectory . '/public_html/wp-content/plugins/brizy/brizy.php'
             ]
         );
 
@@ -444,7 +447,7 @@ class CpanelInstaller
             'get_file_information',
             $this->userName,
             [
-                'path' => '/home/' . $this->userName . '/public_html/wp-content/plugins/brizy-pro/brizy-pro.php'
+                'path' => $this->userHomeDirectory . '/public_html/wp-content/plugins/brizy-pro/brizy-pro.php'
             ]
         );
 
@@ -547,6 +550,22 @@ class CpanelInstaller
         return $curlResponse;
     }
 
-   
+    private function  getUserHomeDirectory() {
+        $settingsResponse = $this->cpanel->execute_action(
+            3,
+            'Variables',
+            'get_user_information',
+            $this->userName,
+        );
 
+        if (is_array($settingsResponse) 
+            && isset($settingsResponse['result']['data']['home']) 
+            && $settingsResponse['result']['data']['home']
+        ) {
+            return $settingsResponse['result']['data']['home'];
+        }
+        
+        $default = '/home/' . $this->userName;
+        return $default;
+    }
 }
