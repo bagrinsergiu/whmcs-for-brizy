@@ -16,6 +16,7 @@ class CpanelInstaller
     private $cpanel;
     private $tmpInstallationFile;
     private $installationDbData;
+    private $wpPassword;
 
     private $options = [
         'wordpress' => true,
@@ -37,7 +38,7 @@ class CpanelInstaller
 
         $this->cpanel = new Cpanel($this->cpanelAccessData);
         $this->cpanel->setTimeout(30);
-        
+
         $this->userName = $service->username;
         $this->databaseName = $this->userName . '_' . 'wp';
 
@@ -85,7 +86,7 @@ class CpanelInstaller
             $this->updateInstallationDbData([
                 'db_pass' => $results['password']
             ]);
-        }      
+        }
     }
 
     public function checkIfDbExists()
@@ -115,7 +116,7 @@ class CpanelInstaller
         } else {
             $response = $this->cpanel->execute_action(3, 'Mysql', 'create_database', $this->userName, ['name' => $this->databaseName]);
 
-            if (array_key_exists('errors',  $response['result']) && $response['result']['errors'] === null) {
+            if (is_array($response) && array_key_exists('errors',  $response['result']) && $response['result']['errors'] === null) {
                 $this->updateInstallationDbData([
                     'db_name' => $this->databaseName
                 ]);
@@ -182,8 +183,10 @@ class CpanelInstaller
         $license = Helpers::assignNewLicenseForService($this->service->id);
 
         $prefix = strtolower(preg_replace('/\s+/', '', Settings::get('company_name')));
+
+        $this->wpPassword = $this->generatePassword();
         $placeHoldersReplace = [
-            '{wpPassword}' => $this->generatePassword(),
+            '{wpPassword}' => $this->wpPassword,
             '{wpEmail}' => $this->service->client->email,
             '{dbName}' => $this->databaseName,
             '{dbUser}' => $this->databaseName,
@@ -217,7 +220,6 @@ class CpanelInstaller
             $placeHoldersReplace = array_merge($placeHoldersReplace, $forceReplace);
         }
 
-
         foreach ($placeHoldersReplace as $placeHolder => $value) {
             $content = str_replace($placeHolder, $value, $content);
         }
@@ -230,12 +232,7 @@ class CpanelInstaller
         $uploadStatus = $this->uploadInstallationFile($options);
 
         if ($uploadStatus) {
-            return true;
-        }
-
-        $updateStatus = $this->updateInstallationFile($options);
-        
-        if ($updateStatus) {
+            $this->sendEmail();
             return true;
         }
 
@@ -253,13 +250,46 @@ class CpanelInstaller
         );
 
         if (!isset($fileResponse['result']['errors'])) {
+            $this->sendEmail();
             return true;
         }
 
         return false;
     }
 
-    
+    public function sendEmail() {
+
+        if (!$this->options['wordpress']) {
+            return false;
+        }
+
+        $translations = Translations::set();
+        $command = 'SendEmail';
+
+        $msgData = [
+            'subject' => Translations::$_['wpi']['installer']['mail']['subject'],
+            'content' => Translations::$_['wpi']['installer']['mail']['content'],
+        ];
+
+        $msgData = str_replace(
+            ['{domain}', '{companyName}', '{wpPassword}'],
+            [$this->service->domain, Settings::get('company_name'), $this->wpPassword],
+            $msgData
+        );
+
+        $postData = [
+            'id' => $this->service->clientId,
+            'customtype' => 'general',
+            'customsubject' => $msgData['subject'],
+            'custommessage' => $msgData['content']
+        ];
+
+        $results = localAPI($command, $postData, '');
+
+        return true;
+    }
+
+
     public function updateInstallationFile($options = [])
     {
         $content = $this->getInstallationScriptContent($options);
@@ -303,7 +333,7 @@ class CpanelInstaller
 
         $cpanelHost = $this->service->serverModel->hostname;
         $requestUri = "https://" . $cpanelHost.":2083/execute/Fileman/upload_files";
-       
+
         $rawResponse = $this->webApiRequest($requestUri, $payload);
 
         $response = json_decode($rawResponse);
@@ -330,14 +360,14 @@ class CpanelInstaller
         $waitingBetweenAttempts = 3;
 
         for ($i = 1; $i <= $maxAttempts; $i++) {
-            
+
             curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false );
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false );
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
             curl_setopt($ch, CURLOPT_HEADER, true);
-            curl_setopt($ch, CURLOPT_NOBODY, true); 
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); 
+            curl_setopt($ch, CURLOPT_NOBODY, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
             curl_setopt($ch, CURLOPT_TIMEOUT, 60);
             $result = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -345,13 +375,13 @@ class CpanelInstaller
 
             if ($code == 200) {
                 return true;
-            }  
+            }
 
             sleep($waitingBetweenAttempts);
         }
-      
+
         return false;
-    } 
+    }
 
     public function addCronJob()
     {
@@ -380,7 +410,7 @@ class CpanelInstaller
 
         return true;
     }
-    
+
     public function checkIfAnotherSiteInstalled() {
         $fileResponse = $this->cpanel->execute_action(
             3,
@@ -502,16 +532,17 @@ class CpanelInstaller
                 '{brizyTheme}' => $theme->theme_id,
                 '{bDownloadToken}' => Settings::get('brizy_pro_download_token')
             ];
-    
+
             $script = $this->putInstallationScriptOnServer($replace);
-    
+
             $runStatus = $this->runInstallationFile();
+
             if (!$runStatus) {
                 $cronJob = $this->addCronJob();
             }
-          
+
         }
-      
+
     }
 
     private function updateInstallationDbData($data) {
@@ -532,7 +563,7 @@ class CpanelInstaller
         if ($results['result'] === 'success') {
             $userPassword = $results['password'];
         }
-        
+
         $ch = curl_init( $url );
         curl_setopt( $ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
         curl_setopt( $ch, CURLOPT_USERPWD, $this->service->username . ':' . $userPassword );
@@ -547,6 +578,6 @@ class CpanelInstaller
         return $curlResponse;
     }
 
-   
+
 
 }

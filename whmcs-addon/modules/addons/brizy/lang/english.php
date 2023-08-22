@@ -27,7 +27,7 @@ $_ADDONLANG['wpi']['installer']['packages']['url'] = "URL: ";
 $_ADDONLANG['wpi']['installer']['packages']['log'] = "LOG: ";
 $_ADDONLANG['wpi']['installer']['packages']['thanks'] = "Thanks! ";
 $_ADDONLANG['wpi']['installer']['packages']['team'] = "Team ";
-$_ADDONLANG['wpi']['installer']['packages']['mailTitleFailed'] = "Installer - installation failed "; 
+$_ADDONLANG['wpi']['installer']['packages']['mailTitleFailed'] = "Installer - installation failed ";
 $_ADDONLANG['wpi']['installer']['packages']['installationSuccess'] = "Your installation has been successfully completed,";
 $_ADDONLANG['wpi']['installer']['packages']['mailTitleSuccess'] = "Installer";
 
@@ -45,3 +45,18 @@ $_ADDONLANG['wpi']['installer']['log']['unzipBrizyPro'] = "Extracting {bPluginNa
 $_ADDONLANG['wpi']['installer']['log']['activateBrizyPro'] = "Activating {bPluginName} Pro...";
 $_ADDONLANG['wpi']['installer']['log']['cleanAfterInstallation'] = "Finishing installation...";
 
+$_ADDONLANG['wpi']['installer']['mail']['subject'] = 'Getting started with {companyName}  installation - {domain}';
+$_ADDONLANG['wpi']['installer']['mail']['content'] = 'Welcome,
+The process of installing wordpress on your site is just beginning: {domain}
+
+You will be able to access the administration panel with the following credentials:
+
+Username: admin
+Password: {wpPassword}
+Administration panel: <a href="http://{domain}/wp-admin/">http://{domain}/wp-admin/</a>
+
+Your website will be ready in a moment!
+
+Thanks!
+{companyName} Team
+';

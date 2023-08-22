@@ -58,11 +58,6 @@ class ApiController extends DefaultApiController
 
             $this->cpanelInstaller = new CpanelInstaller($service);
         }
-
-
-
-
-
     }
 
 
@@ -110,7 +105,7 @@ class ApiController extends DefaultApiController
         $this->cpanelInstaller->setOptions('brizyPro', $this->input['brizyPro']  ? 1 : 0);
 
         $status = $this->cpanelInstaller->putInstallationScriptOnServer([]);
-        
+
         if ($status) {
             $this->respond();
         }
@@ -125,7 +120,6 @@ class ApiController extends DefaultApiController
      */
     public function addCronJob()
     {
-
         $runStatus = $this->cpanelInstaller->runInstallationFile();
 
         if ($runStatus) {
@@ -133,7 +127,7 @@ class ApiController extends DefaultApiController
         }
 
         $status = $this->cpanelInstaller->addCronJob();
-                
+
         if ($status) {
             $this->respond();
         }
@@ -326,6 +320,7 @@ class ApiController extends DefaultApiController
 
         $this->respond($data);
     }
+
 
     public function setInstallerTemplate() {
         $themeId = (int)$_GET['themeId'];

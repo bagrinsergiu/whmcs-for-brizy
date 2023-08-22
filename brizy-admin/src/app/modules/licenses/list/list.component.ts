@@ -54,6 +54,7 @@ export class LicensesListComponent implements OnInit {
 
         confrimModal.result.then((result) => {
             if (result) {
+                this.loading = true;
                 this.licenseService.add(licenseString).subscribe(
                     {
                         next: () => {

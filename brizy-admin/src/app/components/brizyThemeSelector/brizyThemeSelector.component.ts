@@ -23,7 +23,7 @@ export class BrizyThemeSelectorComponent implements OnInit {
     @Input() lang: string = 'english';
     @Input() productId: number;
 
-    loadingData = false;
+    loadingData = true;
     themes: Demos = {
         demos: [] as Demo[],
         terms: [] as Term[],
@@ -83,7 +83,7 @@ export class BrizyThemeSelectorComponent implements OnInit {
     }
 
     selectTheme(demo: Demo) {
-
+        this.loadingData = true;
         this.themeService.setTemplate(demo.id, this.productId).subscribe({
             next: (response) => {
 
@@ -95,11 +95,13 @@ export class BrizyThemeSelectorComponent implements OnInit {
 
 
                 this.selectedTheme = demo;
+                this.loadingData = false;
             },
             error: (error) => {
                 if (error.status != 403) {
                     this.toastr.error(this.translate.get('themeSelector.messages.themeSelectFailed'));
                 }
+                this.loadingData = false;
             }
 
         });
