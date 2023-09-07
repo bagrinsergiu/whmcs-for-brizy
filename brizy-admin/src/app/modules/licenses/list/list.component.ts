@@ -160,6 +160,32 @@ export class LicensesListComponent implements OnInit {
         });
     }
 
+    activateLicense(license) {
+        const confrimModal = this.modalService.open(ConfirmModal, this.defaultConfirmModalSettings);
+        confrimModal.componentInstance.confirm = 'Are you sure you want to activate license?';
+
+        confrimModal.result.then((result) => {
+            if (result) {
+                this.loading = true;
+                this.licenseService.activate(license.id).subscribe(
+                    {
+                        next: () => {
+                            this.loading = false;
+                            this.getLicenses();
+                        },
+                        error: () => {
+                            this.loading = false;
+                            this.getLicenses();
+                        },
+                    }
+                );
+            }
+
+        }, (dismissReason) => {
+
+        });
+    }
+
     refreshList() {
         this.getLicenses();
     }

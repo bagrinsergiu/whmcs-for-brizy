@@ -99,8 +99,13 @@
                     <span *ngIf="license.user_id && license.status === 2" (click)="revokeLicense(license)"
                         class="btn btn-sm  m-1 btn-warning">Revoke</span>
 
+                    <!-- <span *ngIf="license.user_id && license.status === 2" (click)="activateLicense(license)"
+                        class="btn btn-sm  m-1 btn-warning">Activate</span> -->
+
                     <span *ngIf="license.status === 1" (click)="disableLicense(license)"
                         class="btn btn-sm  m-1 btn-warning">Disable</span>
+
+
                 </td>
 
             </tr>

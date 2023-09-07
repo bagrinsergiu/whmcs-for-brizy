@@ -50,19 +50,23 @@ Class BrizyApi {
      */
     private $debug = false;
 
+    /**
+     * Old guzzle client version
+     *
+     * @var boolean
+     */
+    private $oldClient = false;
+
 
     public function __construct()
     {
         $this->token = Settings::get('api_token');
-
-
         $this->client = new Client([
             'base_url' => $this->apiUrl,
             'base_uri' => $this->apiUrl,
             'headers' => [
                 'x-auth-user-token' => $this->token,
             ]
-
         ]);
     }
 
@@ -90,31 +94,34 @@ Class BrizyApi {
         return $this->latestError;
     }
 
-
-    public function request($endpoint, $type = 'GET', $data = null)
-    {
+    public function executeRequest($endpoint, $type = 'GET', $data = null) {
 
         try {
-            $this->latestRequest = $this->client->request($type, $endpoint, [
-                'json' => $data
-            ]);
+            if ($this->oldClient) {
+                $request = $this->client->createRequest($type, $endpoint, [
+                    'json' => $data,
+                    'headers' => [
+                        'x-auth-user-token' => $this->token,
+                    ]
+                ]);
+
+                $this->latestRequest = $this->client->send($request);
+
+            } else {
+                $this->latestRequest = $this->client->request($type, $endpoint, [
+                    'json' => $data
+                ]);
+            }
 
             $statusCode = $this->latestRequest->getStatusCode();
 
             if (!in_array($statusCode, [200, 201, 204])) {
-
-
                 $this->setError('Unable to retrieve data - Status: ' . $statusCode);
 
                 return false;
             }
 
             $body = (string)$this->latestRequest->getBody();
-
-            // if (!$body ) {
-            //     $this->setError('Unable to retrieve data - Empty response');
-            //     return false;
-            // }
 
             return $this->decodeJson($body);
         } catch (\GuzzleHttp\Exception\ConnectException $ce) {
@@ -140,6 +147,21 @@ Class BrizyApi {
         }
 
         return $this->decodeJson($body);
+    }
+
+
+    public function request($endpoint, $type = 'GET', $data = null)
+    {
+        if (method_exists($this->client, 'request')) {
+            return $this->executeRequest($endpoint, $type, $data);
+        }
+
+        if (method_exists($this->client, 'createRequest')) {
+            $this->oldClient = true;
+            return $this->executeRequest($endpoint, $type, $data);
+        }
+
+        return false;
     }
 
     private function decodeJson($data)

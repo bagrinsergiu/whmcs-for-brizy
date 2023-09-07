@@ -142,6 +142,30 @@ class ApiController extends DefaultApiController {
     }
 
     /**
+     * Disable license
+     *
+     * @return void
+     */
+    public function activateLicense() {
+
+        $licenseId = (int)$_GET['license_id'];
+
+        if ($licenseId) {
+            $licenseDb = Capsule::table('brizy_licenses')
+            ->where('id', $licenseId)
+            ->first();
+
+            if ($licenseDb) {
+                $response = $this->brizyApi->updateLicense($licenseDb->license, ['status' => 'active', 'domain' => $licenseDb->activation_domain]);
+                $this->respond();
+            }
+        }
+
+        $this->respondWithError('Unable to find license with id: ' . $licenseId);
+    }
+
+
+    /**
      * Adds a license
      *
      * @return void

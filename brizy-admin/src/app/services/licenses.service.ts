@@ -26,6 +26,10 @@ export class LicenseService {
         return this.http.get<{ data: Array<any> }>(`addonmodules.php?module=brizy&action=api&execute=disableLicense&license_id=${licenseId}`);
     }
 
+    activate(licenseId: number): Observable<{ data: Array<any> }> {
+        return this.http.get<{ data: Array<any> }>(`addonmodules.php?module=brizy&action=api&execute=activateLicense&license_id=${licenseId}`);
+    }
+
     add(licenseString: string): Observable<ApiResponse<any>> {
         return this.http.post<ApiResponse<any>>(`addonmodules.php?module=brizy&action=api&execute=addLicense`, { license: licenseString });
     }
