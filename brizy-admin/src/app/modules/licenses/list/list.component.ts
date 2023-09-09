@@ -18,7 +18,6 @@ export class LicensesListComponent implements OnInit {
     showMultipleLicensesModal = false;
     defaultConfirmModalSettings = { backdrop: false, keyboard: false, centered: true, modalDialogClass: 'panel panel-primary', windowClass: 'modal whmcs-modal fade in show'};
 
-
     closeResult = '';
     constructor(
         public licenseService: LicenseService,

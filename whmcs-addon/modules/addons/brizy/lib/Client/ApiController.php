@@ -102,7 +102,8 @@ class ApiController extends DefaultApiController
 
         $this->cpanelInstaller->setOptions('wordpress', $this->input['wordpress']  ? 1 : 0);
         $this->cpanelInstaller->setOptions('brizy', $this->input['brizy']  ? 1 : 0);
-        $this->cpanelInstaller->setOptions('brizyPro', $this->input['brizyPro']  ? 1 : 0);
+        $brizyProOption = $this->input['brizyPro'] &&  Helpers::checkIfCanInstallBrizyPro($this->serviceId) ? 1 : 0;
+        $this->cpanelInstaller->setOptions('brizyPro', $brizyProOption);
 
         $status = $this->cpanelInstaller->putInstallationScriptOnServer([]);
 

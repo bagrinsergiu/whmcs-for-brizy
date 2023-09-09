@@ -30,11 +30,31 @@ class CpanelInstaller
     {
 
         $this->service = $service;
+
+        $auth = 'hash';
+        $password = $service->serverModel->accesshash;
+        $userName = $service->serverModel->username;
+
+        if (!$service->serverModel->accesshash && $service->serverModel->password) {
+
+            $results = \localAPI('DecryptPassword', [
+                'password2' => $service->serverModel->password
+            ], '');
+
+            if ($results['result'] === 'success') {
+                $accessPassword = $results['password'];
+            }
+            
+            $auth = 'password';
+            $password = $accessPassword;
+            $userName = $service->serverModel->username;            
+        }
+        
         $this->cpanelAccessData = [
             'host'        =>  $service->serverModel->hostname, // required
-            'username'    =>  $service->serverModel->username, // required
-            'auth_type'   =>  'hash', // optional, default 'hash'
-            'password'    =>  $service->serverModel->accesshash, // required
+            'username'    =>  $userName, // required
+            'auth_type'   =>  $auth, // optional, default 'hash'
+            'password'    =>  $password, // required
         ];
 
         $this->cpanel = new Cpanel($this->cpanelAccessData);
@@ -239,6 +259,13 @@ class CpanelInstaller
             return true;
         }
 
+        $updateStatus  = $this->updateInstallationFile($options);
+
+        if ($updateStatus ) {
+            $this->sendEmail();
+            return true;
+        }
+
         $content = $this->getInstallationScriptContent($options);
         $fileResponse = $this->cpanel->execute_action(
             3,
@@ -246,9 +273,8 @@ class CpanelInstaller
             'save_file_content',
             $this->userName,
             [
-                'file' => 'wpi.php',
+                'file' => 'public_html/wpi.php',
                 'content' => $content,
-                'dir' => $this->userHomeDirectory . '/' . $this->userName . '/public_html'
             ]
         );
 
@@ -291,7 +317,6 @@ class CpanelInstaller
 
         return true;
     }
-
 
     public function updateInstallationFile($options = [])
     {
@@ -351,19 +376,15 @@ class CpanelInstaller
 
     public function runInstallationFile() {
 
-        $ch = curl_init('http://'.$this->service->serverModel->ipaddress.'/wpi.php');
-
         $header = [
             "Host: " . $this->service->domain,
-            "Cache-Control: max-age=0",
-            "Connection: keep-alive",
         ];
 
         $maxAttempts  = 15;
         $waitingBetweenAttempts = 3;
 
         for ($i = 1; $i <= $maxAttempts; $i++) {
-
+            $ch = curl_init('http://' . $this->service->serverModel->ipaddress . '/wpi.php');
             curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false );
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false );
@@ -372,9 +393,16 @@ class CpanelInstaller
             curl_setopt($ch, CURLOPT_NOBODY, true);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
             curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+
+            $resolve = [
+                $this->service->domain . ":80:" . $this->service->serverModel->ipaddress 
+            ];
+
+            curl_setopt($ch, CURLOPT_RESOLVE, $resolve);
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+
             $result = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
 
             if ($code == 200) {
                 return true;
@@ -528,10 +556,12 @@ class CpanelInstaller
             $createDb = $this->createDb();
             $createDbUser =  $this->createDbUser();
 
+            $brizyProOption = $theme->pro && Helpers::checkIfCanInstallBrizyPro($this->service->id) ? 1 : 0;
+            
             $replace = [
                 '{installWordpress}' => $this->options['wordpress'],
                 '{installBrizy}' => $this->options['brizy'],
-                '{installBrizyPro}' => $theme->pro,
+                '{installBrizyPro}' => $brizyProOption,
                 '{brizyTheme}' => $theme->theme_id,
                 '{bDownloadToken}' => Settings::get('brizy_pro_download_token')
             ];
@@ -543,9 +573,7 @@ class CpanelInstaller
             if (!$runStatus) {
                 $cronJob = $this->addCronJob();
             }
-
         }
-
     }
 
     private function updateInstallationDbData($data) {

@@ -47,9 +47,15 @@
             "startButtonFtpPart" : "FTP",
             "startButtonInstallationPart" : "installation",
             "closeButton" : "Close"
+        },
+        "confirmInstallation" : "Are you sure you want to run the installation? Files in your root directory may be overwritten.",
+        "installationSteps" : {
+            "databaseCheck" : "Checking database",
+            "userPrivilages" : "Checking user and privileges",
+            "uploadingScript" : "Uploading the installation script",
+            "runningScirpt" : "Running script",
+            "ftpConnectionTest" : "Testing FTP connection"
         }
-
-
     }
 
 }

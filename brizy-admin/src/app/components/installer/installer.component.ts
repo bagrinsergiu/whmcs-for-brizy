@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateService } from '@ngstack/translate';
 import { AdvancedOptions } from 'src/app/interfaces/advancedOptions';
 import { InitData } from 'src/app/interfaces/initData.interface';
 import { InstallerService } from 'src/app/services/installer.service';
+import { ConfirmModal } from 'src/app/components/confirmModal/confrimModal.component';
 
 @Component({
     selector: 'app-brizy-installer',
@@ -40,11 +42,12 @@ export class InstallerComponent implements OnInit {
     loadingData = false;
     initData: InitData;
 
-
+    defaultConfirmModalSettings = { backdrop: false, keyboard: false, centered: true, modalDialogClass: 'panel panel-primary', windowClass: 'modal whmcs-modal fade in show'};
 
     constructor(
         private installerService: InstallerService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private modalService: NgbModal
     ) {
         this.installationModal = false;
         this.translate.use(this.lang);
@@ -69,50 +72,59 @@ export class InstallerComponent implements OnInit {
     }
 
     install() {
-        this.log = [];
-        this.installationStatus = 1;
-        const steps = [
-            {
-                'description': 'Checking database',
-                'method': this.createDatabase(),
-            },
-            {
-                'description': 'Checking user and privileges',
-                'method': this.createUser()
-            },
-            {
-                'description': 'Uploading the installation script',
-                'method': this.uploadingInstallationScript()
-            },
-            {
-                'description': 'Running script',
-                'method': this.runRemoteScript()
-            },
+        const confrimModal = this.modalService.open(ConfirmModal, this.defaultConfirmModalSettings);
+        confrimModal.componentInstance.confirm = this.translate.get('installer.confirmInstallation');
 
-        ];
+        confrimModal.result.then((result) => {
+            if (result) {
+                this.log = [];
+                this.installationStatus = 1;
+                const steps = [
+                    {
+                        'description':  this.translate.get('installer.installationSteps.databaseCheck'),
+                        'method': this.createDatabase(),
+                    },
+                    {
+                        'description': this.translate.get('installer.installationSteps.userPrivilages'),
+                        'method': this.createUser()
+                    },
+                    {
+                        'description': this.translate.get('installer.installationSteps.uploadingScript'),
+                        'method': this.uploadingInstallationScript()
+                    },
+                    {
+                        'description': this.translate.get('installer.installationSteps.runningScirpt'),
+                        'method': this.runRemoteScript()
+                    },
 
-        const stepsFtp = [
-            {
-                'description': 'Testing FTP connection',
-                'method': this.testFtpConnection()
-            },
-            {
-                'description': 'Uploading the installation script',
-                'method': this.uploadingInstallationScriptFtp()
-            },
-            {
-                'description': 'Running script',
-                'method': this.runRemoteScriptFtp()
-            },
+                ];
 
-        ];
+                const stepsFtp = [
+                    {
+                        'description': this.translate.get('installer.installationSteps.ftpConnectionTest'),
+                        'method': this.testFtpConnection()
+                    },
+                    {
+                        'description': this.translate.get('installer.installationSteps.uploadingScript'),
+                        'method': this.uploadingInstallationScriptFtp()
+                    },
+                    {
+                        'description': this.translate.get('installer.installationSteps.runningScirpt'),
+                        'method': this.runRemoteScriptFtp()
+                    },
 
-        if (this.advanced.ftp.active) {
-            this.executeSteps(stepsFtp);
-        } else {
-            this.executeSteps(steps);
-        }
+                ];
 
+                if (this.advanced.ftp.active) {
+                    this.executeSteps(stepsFtp);
+                } else {
+                    this.executeSteps(steps);
+                }
+            }
+
+        }, (dismissReason) => {
+
+        });
     }
 
 
