@@ -311,6 +311,11 @@
         .brz-demo-filter-terms {
             padding-right: 10px;
             width: 230px;
+
+            option {
+                font-family: "Open Sans", sans-serif;
+                font-size: 14px
+            }
         }
 
         .theme-browser .theme .theme-screenshot {
@@ -444,6 +449,7 @@
             border: 1px solid #8c8f94;
             background-color: #fff;
             color: #2c3338;
+            font-family: "Open Sans", sans-serif;
         }
 
         select {
