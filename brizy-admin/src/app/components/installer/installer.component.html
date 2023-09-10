@@ -32,7 +32,7 @@
             <img class="card-img-top p-3" style="max-height: 100px" [src]="initData.wl.bLogo" alt="{{initData.wl.bPluginName}}">
             <div class="card-body">
                 <h5 class="card-title">{{initData.wl.bPluginName}} {{ 'installer.titlePartName' | translate }}</h5>
-                <p class="card-text">
+                <p class="card-text small">
                     {{ 'installer.description' | translate: {pluginName: initData.wl.bPluginName} }}
                 </p>
                 <span *ngIf="false"></span>

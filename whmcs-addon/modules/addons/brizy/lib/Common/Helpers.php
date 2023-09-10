@@ -260,7 +260,7 @@ class Helpers
     public static function getHash($length = null)
     {
         if (!$length) {
-            return $length = rand(4, 22);
+            $length = rand(2, 22);
         }
 
         $bytes = random_bytes(ceil($length / 2));

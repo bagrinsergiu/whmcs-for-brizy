@@ -1,6 +1,8 @@
+#Builder {
+    @import "bootstrap/scss/bootstrap";
+}
+
 .brizy-installer-container {
-
-
     .brizzy-installer-modal {
     &.show {
         display: block;
