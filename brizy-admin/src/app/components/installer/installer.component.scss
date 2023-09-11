@@ -3,6 +3,17 @@
 }
 
 .brizy-installer-container {
+
+    input[type=checkbox]{
+        margin-right: 5px;
+    }
+
+    .custom-checkbox {
+        small {
+            display: block;
+        }
+    }
+
     .brizzy-installer-modal {
     &.show {
         display: block;

@@ -5,7 +5,6 @@ class WpInstaller
     private $password = '{wpPassword}';
     private $email = '{wpEmail}';
 
-    private $tmpInstallFolder = './tmp';
     private $remoteArchiveFile = 'https://wordpress.org/latest.zip';
     private $localArchiveFile = "wp-install.zip";
 
@@ -103,15 +102,16 @@ class WpInstaller
     {
         $zip = new ZipArchive();
         $res = $zip->open("wp-install.zip");
+
         if ($res === true) {
-            $zip->extractTo($this->tmpInstallFolder);
+            $zip->extractTo('./');
             $zip->close();
-            $this->copy($this->tmpInstallFolder . DIRECTORY_SEPARATOR . 'wordpress', $this->tmpInstallFolder);
-            $this->deleteDir($this->tmpInstallFolder . DIRECTORY_SEPARATOR . 'wordpress');
-            copy($this->tmpInstallFolder . DIRECTORY_SEPARATOR . 'wp-config-sample.php', $this->tmpInstallFolder . DIRECTORY_SEPARATOR . 'wp-config.php');
+            $this->moveFolder('wordpress', __DIR__);
+            copy('wp-config-sample.php', 'wp-config.php');
+
             return true;
         }
-
+ 
         return false;
     }
 
@@ -122,7 +122,7 @@ class WpInstaller
             return false;
         }
 
-        $configFile = $this->tmpInstallFolder . DIRECTORY_SEPARATOR . "wp-config.php";
+        $configFile = "wp-config.php";
 
         if (!file_exists($configFile)) {
             return false;
@@ -143,7 +143,6 @@ class WpInstaller
         // Check connection
         if ($conn->connect_error) {
             return true;
-
         }
 
         return false;
@@ -151,9 +150,6 @@ class WpInstaller
 
     private function installWp()
     {
-
-
-        $this->copy($this->tmpInstallFolder, '.');
 
         $_SERVER['HTTP_HOST'] = $this->hostname;
         $_SERVER['SCRIPT_FILENAME'] = $this->hostname;
@@ -325,6 +321,7 @@ class WpInstaller
         $this->deleteFile($this->localBrizyArchiveFile);
         $this->deleteFile($this->localBrizyProArchiveFile);
         $this->deleteDir('tmp');
+        $this->deleteDir('wordpress');
         file_put_contents('wpi.php', '<?php echo "OK"?>');
 
         return true;
@@ -433,21 +430,21 @@ class WpInstaller
         }
         rmdir($dir);
     }
+    public function moveFolder($from, $to) {
 
-    public function copy($src, $dst)
-    {
-        $dir = opendir($src);
-        @mkdir($dst);
-        while (($file = readdir($dir))) {
-            if (($file != '.') && ($file != '..')) {
-                if (is_dir($src . '/' . $file)) {
-                    $this->copy($src . '/' . $file, $dst . '/' . $file);
-                } else {
-                    copy($src . '/' . $file, $dst . '/' . $file);
+        if (is_dir($from)) {
+            if ($dh = opendir($from)) {
+                while (($file = readdir($dh)) !== false) {
+
+                    if ($file==".") continue;
+                    if ($file=="..")continue;            
+
+                    rename($from . DIRECTORY_SEPARATOR . $file, $to.DIRECTORY_SEPARATOR.$file);
+                    
                 }
+                closedir($dh);
             }
         }
-        closedir($dir);
     }
 
     public function log($data)
