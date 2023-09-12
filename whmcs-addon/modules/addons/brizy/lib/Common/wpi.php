@@ -72,7 +72,12 @@ class WpInstaller
 
     private function checkIfICanInstall()
     {
-        return !$this->checkIfInProgress();
+        if ($this->checkIfInProgress()) {
+            echo 'In progress...';
+            die();
+        }
+
+        return true;
     }
 
     private function downloadLatestArchive()

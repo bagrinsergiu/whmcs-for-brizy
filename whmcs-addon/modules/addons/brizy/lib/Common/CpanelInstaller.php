@@ -302,7 +302,7 @@ class CpanelInstaller
 
         $msgData = str_replace(
             ['{domain}', '{companyName}', '{wpPassword}'],
-            [$this->service->domain, Settings::get('company_name'), $this->wpPassword],
+            [$this->service->domain, Settings::get('company_name'), '{literal}' . $this->wpPassword . '{/literal}'],
             $msgData
         );
 
@@ -392,7 +392,7 @@ class CpanelInstaller
             curl_setopt($ch, CURLOPT_HEADER, true);
             curl_setopt($ch, CURLOPT_NOBODY, true);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 600);
 
             $resolve = [
                 $this->service->domain . ":80:" . $this->service->serverModel->ipaddress 
@@ -525,7 +525,7 @@ class CpanelInstaller
         $alphaSmall = 'abcdefghijklmnopqrstuvwxyz';
         $alphaCaps  = strtoupper($alphaSmall);
         $numerics   = '1234567890';
-        $specialChars = '`~!@#$%^&*()-_=+]}[{;:,/?|';
+        $specialChars = '`~!@#$%^&*()-_=+][;:,/?|';
 
         $container = $alphaSmall.$alphaCaps.$numerics.$specialChars;
         $password = '';
