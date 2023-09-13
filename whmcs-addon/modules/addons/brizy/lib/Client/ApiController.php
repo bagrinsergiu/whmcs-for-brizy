@@ -6,18 +6,15 @@ use WHMCS\Module\Addon\brizy\Api\DefaultApiController;
 use WHMCS\Module\Addon\Brizy\Common\CpanelInstaller;
 use WHMCS\Module\Addon\Brizy\Common\Helpers;
 use WHMCS\Module\Addon\Brizy\Common\Settings;
-use \GuzzleHttp\Client;
-use WHMCS\Module\Addon\Brizy\Common\Session;
-use WHMCS\Module\Addon\Brizy\Common\BrizyApi;
-use WHMCS\Database\Capsule;
 use WHMCS\Module\Addon\Brizy\Common\Translations;
+use \GuzzleHttp\Client;
+
 
 /**
  * Client area API controller
  */
 class ApiController extends DefaultApiController
 {
-
     /**
      * CpanelInstaller - helper
      *
@@ -39,16 +36,15 @@ class ApiController extends DefaultApiController
     {
         parent::__construct();
 
-
-        $this->serviceId = $_GET['serviceId'];
+        $this->serviceId = (int)$_GET['serviceId'];
 
         $currentUser =  new \WHMCS\Authentication\CurrentUser;
 
         if ($this->serviceId) {
             $service = \WHMCS\Service\Service::where('id', $this->serviceId)
             ->first();
-
-            if (!$service || Helpers::checkIfCanInstallBrizy($this->serviceId)) {
+           
+            if (!$service || !Helpers::checkIfCanInstallBrizy($this->serviceId)) {
                 $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']);
             }
 
@@ -57,9 +53,10 @@ class ApiController extends DefaultApiController
             }
 
             $this->cpanelInstaller = new CpanelInstaller($service);
-        }
+        } else {
+            $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']);
+        }     
     }
-
 
     /**
      * Creates a database
@@ -98,8 +95,6 @@ class ApiController extends DefaultApiController
      */
     public function uploadInstallationScript()
     {
-        $advanced = $this->input['advanced']['active'] ?? false;
-
         $this->cpanelInstaller->setOptions('wordpress', $this->input['wordpress']  ? 1 : 0);
         $this->cpanelInstaller->setOptions('brizy', $this->input['brizy']  ? 1 : 0);
         $brizyProOption = $this->input['brizyPro'] &&  Helpers::checkIfCanInstallBrizyPro($this->serviceId) ? 1 : 0;
@@ -256,8 +251,6 @@ class ApiController extends DefaultApiController
 
             $del = \ftp_delete($con, $file);
 
-
-
             return $del;
         } catch (Exception $e) {
             return false;
@@ -292,7 +285,6 @@ class ApiController extends DefaultApiController
             $this->respondWithError(Translations::$_['client']['api']['repsonse']['ftpScriptError'] . $logUrl . ' ', 403);
         }
 
-
         $this->respond();
     }
 
@@ -303,7 +295,6 @@ class ApiController extends DefaultApiController
      */
     public function initData()
     {
-
         $pluginName = Settings::get('company_name');
         $pluginLogo = Settings::get('logo_url');
         $data = [
@@ -318,68 +309,6 @@ class ApiController extends DefaultApiController
                 'bLogo' => $pluginLogo,
             ]
         ];
-
-        $this->respond($data);
-    }
-
-
-    public function setInstallerTemplate() {
-        $themeId = (int)$_GET['themeId'];
-        $productId = (int)$_GET['productId'];
-
-        $product = \WHMCS\Product\Product::find($productId);
-
-        if (!$product){
-            $this->respondWithError(Translations::$_['client']['api']['repsonse']['themeSelector']['setThemeError']);
-        }
-
-        $brizyApi = new BrizyApi();
-        $themes = $brizyApi->getDemos();
-
-        $demoExists = false;
-
-        if (!$themes || !isset($themes->demos)) {
-            $this->respondWithError(Translations::$_['client']['api']['repsonse']['themeSelector']['setThemeError']);
-        }
-
-
-        foreach($themes->demos as $demo) {
-
-            if ($demo->id == $themeId) {
-                Session::set('theme_id', $themeId);
-                Session::set('theme_name', $demo->name);
-                Session::set('theme_pro', $demo->pro ? 1 : 0);
-                $demoExists = true;
-                break;
-            }
-        }
-
-        if ($demoExists) {
-            $addonAvailable = Helpers::getBrizyProProductAddon($productId) ? true : false;
-            $productIsBrizyPro = Helpers::isProductBrizyPro($productId);
-
-            if ($demo->pro && !$productIsBrizyPro && !$addonAvailable) {
-                $this->respondWithError(Translations::$_['client']['api']['repsonse']['themeSelector']['proThemeUnavailable']);
-            }
-
-            $this->respond([
-                'pro' => $demo->pro,
-                'name' => $demo->name,
-                'id' => $demo->id,
-                'addon_available' => $addonAvailable,
-                'product_pro' => $productIsBrizyPro,
-            ]);
-        }
-
-        $this->respondWithError(Translations::$_['client']['api']['repsonse']['themeSelector']['notPossibleToSet']);
-    }
-
-    public function getInstallerTemplate() {
-        $data = [
-            'themeId' => null,
-        ];
-
-        $data['themeId'] = Session::get('theme_id');
 
         $this->respond($data);
     }

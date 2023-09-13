@@ -82,9 +82,6 @@ class DefaultApiController
         return $this;
     }
 
-
-
-
     /**
      * Adds one message
      *

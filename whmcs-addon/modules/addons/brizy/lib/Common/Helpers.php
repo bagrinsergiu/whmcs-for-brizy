@@ -243,9 +243,8 @@ class Helpers
         $service = \WHMCS\Service\Service::where('id', $serviceId)
             ->first();
 
-
-        if ($service->clientId !== $userData->id) {
-            return false;
+        if ($service && $service->clientId === $userData->id) {
+            return true;
         }
 
         return false;

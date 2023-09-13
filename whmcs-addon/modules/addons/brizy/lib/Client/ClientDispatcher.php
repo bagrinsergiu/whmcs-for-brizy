@@ -1,8 +1,9 @@
 <?php
 
 namespace WHMCS\Module\Addon\Brizy\Client;
-use  WHMCS\Module\Addon\Brizy\Client\Controller;
+use WHMCS\Module\Addon\Brizy\Client\Controller;
 use WHMCS\Module\Addon\Brizy\Common\Translations;
+
 
 /**
  * Sample Client Area Dispatch Handler
@@ -25,6 +26,10 @@ class ClientDispatcher {
 
         if ($action === 'api') {
             $controller = new ApiController();
+            $action = isset($_REQUEST['execute']) ? $_REQUEST['execute'] : '';
+        }
+        else if ($action === 'template') {
+            $controller = new TemplateApiController();
             $action = isset($_REQUEST['execute']) ? $_REQUEST['execute'] : '';
         } else {
             $controller = new Controller();

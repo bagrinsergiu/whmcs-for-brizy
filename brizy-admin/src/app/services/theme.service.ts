@@ -17,10 +17,10 @@ export class ThemeService {
     }
 
     setTemplate(themeId: number, productId: number): Observable<ApiResponse<{pro: boolean; name: string; id: number; addon_available: boolean; product_pro: boolean}>> {
-        return this.http.get<ApiResponse<{pro: boolean; name: string; id: number; addon_available: boolean; product_pro: boolean}>>(`index.php?m=brizy&action=api&execute=setInstallerTemplate&themeId=${themeId}&productId=${productId}`);
+        return this.http.get<ApiResponse<{pro: boolean; name: string; id: number; addon_available: boolean; product_pro: boolean}>>(`index.php?m=brizy&action=template&execute=setInstallerTemplate&themeId=${themeId}&productId=${productId}`);
     }
 
     getSelectedTemplate(): Observable<ApiResponse<{themeId: number}>> {
-        return this.http.get<ApiResponse<{themeId: number}>>(`index.php?m=brizy&action=api&execute=getInstallerTemplate`);
+        return this.http.get<ApiResponse<{themeId: number}>>(`index.php?m=brizy&action=template&execute=getInstallerTemplate`);
     }
 }
