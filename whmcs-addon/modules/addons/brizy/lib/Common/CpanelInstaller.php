@@ -44,12 +44,12 @@ class CpanelInstaller
             if ($results['result'] === 'success') {
                 $accessPassword = $results['password'];
             }
-            
+
             $auth = 'password';
             $password = $accessPassword;
-            $userName = $service->serverModel->username;            
+            $userName = $service->serverModel->username;
         }
-        
+
         $this->cpanelAccessData = [
             'host'        =>  $service->serverModel->hostname, // required
             'username'    =>  $userName, // required
@@ -252,6 +252,8 @@ class CpanelInstaller
 
     public function putInstallationScriptOnServer($options = [])
     {
+        $htaccessStatus = $this->updateHtaccessFile();
+
         $uploadStatus = $this->uploadInstallationFile($options);
 
         if ($uploadStatus) {
@@ -395,7 +397,7 @@ class CpanelInstaller
             curl_setopt($ch, CURLOPT_TIMEOUT, 600);
 
             $resolve = [
-                $this->service->domain . ":80:" . $this->service->serverModel->ipaddress 
+                $this->service->domain . ":80:" . $this->service->serverModel->ipaddress
             ];
 
             curl_setopt($ch, CURLOPT_RESOLVE, $resolve);
@@ -557,7 +559,7 @@ class CpanelInstaller
             $createDbUser =  $this->createDbUser();
 
             $brizyProOption = $theme->pro && Helpers::checkIfCanInstallBrizyPro($this->service->id) ? 1 : 0;
-            
+
             $replace = [
                 '{installWordpress}' => $this->options['wordpress'],
                 '{installBrizy}' => $this->options['brizy'],
@@ -575,6 +577,8 @@ class CpanelInstaller
             }
         }
     }
+
+
 
     private function updateInstallationDbData($data) {
          $updatedCount = Capsule::table('brizy_installations')
@@ -626,5 +630,89 @@ class CpanelInstaller
 
         $default = '/home/' . $this->userName;
         return $default;
+    }
+
+    public function updateHtaccessFile() {
+
+        sleep(1);
+        $htaccessTemplate = '
+
+# BEGIN BIZY INSTALLER
+<IfModule Litespeed>
+    RewriteEngine On
+    RewriteRule wpi.php - [E=noabort:1, E=noconntimeout:1]
+</IfModule>
+# END BIZY INSTALLER
+';
+        $fileResponse = $this->cpanel->execute_action(
+            3,
+            'Fileman',
+            'get_file_content',
+            $this->userName,
+            [
+                'dir' => $this->userHomeDirectory . '/public_html',
+                'file' => '.htaccess'
+            ]
+        );
+
+        if ($fileResponse && $fileResponse['result']['status']) {
+            $data = $fileResponse['result']['data']['content'];
+
+            if ($data && str_contains($data, 'wpi.php')) {
+                return true;
+            }
+
+            $updatedData = $data . $htaccessTemplate;
+            $payload = [
+                'file' => '.htaccess',
+                'content' => $updatedData,
+                'dir' => '/public_html'
+            ];
+
+            $fileResponseUpdate = $this->cpanel->execute_action(
+                3,
+                'Fileman',
+                'save_file_content',
+                $this->userName,
+                [
+                    'dir' => $this->userHomeDirectory . '/public_html',
+                    'file' => '.htaccess',
+                    'content' => $updatedData,
+                ]
+            );
+
+
+            if ($fileResponseUpdate && $fileResponseUpdate['result']['status']){
+                    return true;
+            }
+
+        }
+        $file = tempnam(sys_get_temp_dir(), 'POST');
+        file_put_contents($file, $htaccessTemplate);
+
+        if (function_exists('curl_file_create')) {
+            $cf = curl_file_create($file, 'text/plain', '.htaccess');
+        } else {
+            $cf = "@/".$file."; filename=.htaccess";
+        }
+
+        $payload = [
+            'dir'    => '/public_html',
+            'file-1' => $cf
+        ];
+
+        $cpanelHost = $this->service->serverModel->hostname;
+        $requestUri = "https://" . $cpanelHost.":2083/execute/Fileman/upload_files";
+
+        $rawResponse = $this->webApiRequest($requestUri, $payload);
+
+        $response = json_decode($rawResponse);
+        if (empty($response)) {
+            return false;
+        } elseif (!$response->status) {
+            return false;
+        }
+
+        return true;
     }
 }

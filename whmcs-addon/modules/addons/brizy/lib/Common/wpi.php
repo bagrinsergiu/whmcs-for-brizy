@@ -1,4 +1,8 @@
 <?php
+
+ignore_user_abort(true);
+set_time_limit(0);
+
 class WpInstaller
 {
     private $login = 'admin';
@@ -116,7 +120,7 @@ class WpInstaller
 
             return true;
         }
- 
+
         return false;
     }
 
@@ -442,10 +446,10 @@ class WpInstaller
                 while (($file = readdir($dh)) !== false) {
 
                     if ($file==".") continue;
-                    if ($file=="..")continue;            
+                    if ($file=="..")continue;
 
                     rename($from . DIRECTORY_SEPARATOR . $file, $to.DIRECTORY_SEPARATOR.$file);
-                    
+
                 }
                 closedir($dh);
             }
