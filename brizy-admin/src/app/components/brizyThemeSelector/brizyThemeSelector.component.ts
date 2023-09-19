@@ -11,6 +11,7 @@ import { Demo } from 'src/app/interfaces/demo.interface';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModal } from '../confirmModal/confrimModal.component';
 import { TranslateService } from '@ngstack/translate';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-brizy-theme-selector',
@@ -34,6 +35,8 @@ export class BrizyThemeSelectorComponent implements OnInit {
         category: "0",
         phrase: ''
     }
+
+    whmcsPath = environment.whmcsPath;
 
     selectedTheme: Demo = null;
 
