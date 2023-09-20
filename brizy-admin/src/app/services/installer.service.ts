@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { License } from '../interfaces/license.interface';
 import { ApiResponse } from '../interfaces/apiResponse.interface';
 import { InitData } from '../interfaces/initData.interface';
+import { ServiceInfo } from '../interfaces/serviceInfo.interface';
 @Injectable({
     providedIn: 'root'
 })
@@ -29,6 +30,10 @@ export class InstallerService {
 
     initData(serviceId: number): Observable<ApiResponse<InitData>> {
         return this.http.get<ApiResponse<InitData>>(`index.php?m=brizy&action=api&execute=initData&serviceId=${serviceId}`);
+    }
+
+    serviceInfo(serviceId: number): Observable<ApiResponse<ServiceInfo>> {
+        return this.http.get<ApiResponse<InitData>>(`index.php?m=brizy&action=api&execute=serviceInfo&serviceId=${serviceId}`);
     }
 
     testFtpConnection(serviceId: number, options: any): Observable<ApiResponse<any>> {
