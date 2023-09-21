@@ -55,7 +55,6 @@ export class InstallerComponent implements OnInit {
 
     ngOnInit() {
         this.getInitData();
-
         if (!this.pro) {
             this.advanced.brizyPro = false;
         } else {
@@ -68,7 +67,38 @@ export class InstallerComponent implements OnInit {
     }
 
     openInstallationModal() {
-        this.installationModal = true;
+        this.loadingData = true;
+        this.installerService.serviceInfo(this.serviceId).subscribe({
+            next: (response) => {
+                this.initData.installed = response.data.installed;
+
+                this.advanced.ftp.host = String(response.data.host);
+
+                if (this.initData.installed?.brizyPro) {
+                    this.advanced.brizyPro = false;
+                    this.advanced.active = true;
+                }
+
+                if (this.initData.installed?.brizy) {
+                    this.advanced.brizy = false;
+                    this.advanced.active = true;
+                }
+
+                if (this.initData.installed?.wordpress) {
+                    this.advanced.wordpress = false;
+                    this.advanced.active = true;
+                }
+
+                this.installationModal = true;
+                this.loadingData = false;
+            },
+            error: () => {
+                this.loadingData = false
+
+            },
+        });
+
+
     }
 
     install() {
@@ -162,23 +192,6 @@ export class InstallerComponent implements OnInit {
         this.installerService.initData(this.serviceId).subscribe({
             next: (response) => {
                 this.initData = response.data;
-
-                this.advanced.ftp.host = String(response.data.host);
-
-                if (this.initData.installed?.brizyPro) {
-                    this.advanced.brizyPro = false;
-                    this.advanced.active = true;
-                }
-
-                if (this.initData.installed?.brizy) {
-                    this.advanced.brizy = false;
-                    this.advanced.active = true;
-                }
-
-                if (this.initData.installed?.wordpress) {
-                    this.advanced.wordpress = false;
-                    this.advanced.active = true;
-                }
             },
             error: () => {
 

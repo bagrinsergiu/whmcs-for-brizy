@@ -394,14 +394,13 @@ class CpanelInstaller
             curl_setopt($ch, CURLOPT_HEADER, true);
             curl_setopt($ch, CURLOPT_NOBODY, true);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 600);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 20);
 
             $resolve = [
                 $this->service->domain . ":80:" . $this->service->serverModel->ipaddress
             ];
 
             curl_setopt($ch, CURLOPT_RESOLVE, $resolve);
-            curl_setopt($ch, CURLOPT_VERBOSE, true);
 
             $result = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);

@@ -43,7 +43,7 @@ class ApiController extends DefaultApiController
         if ($this->serviceId) {
             $service = \WHMCS\Service\Service::where('id', $this->serviceId)
             ->first();
-           
+
             if (!$service || !Helpers::checkIfCanInstallBrizy($this->serviceId)) {
                 $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']);
             }
@@ -55,7 +55,7 @@ class ApiController extends DefaultApiController
             $this->cpanelInstaller = new CpanelInstaller($service);
         } else {
             $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']);
-        }     
+        }
     }
 
     /**
@@ -308,6 +308,24 @@ class ApiController extends DefaultApiController
                 'bPluginName' => $pluginName,
                 'bLogo' => $pluginLogo,
             ]
+        ];
+
+        $this->respond($data);
+    }
+
+    /**
+     * Returns service data for Brizy Installer
+     *
+     * @return void
+     */
+    public function serviceInfo()
+    {
+        $data = [
+            'installed' => [
+                'wordpress' =>  $this->cpanelInstaller->checkIfWpInstalled(),
+                'brizy' => $this->cpanelInstaller->checkIfBrizzyInstalled(),
+                'brizyPro' => $this->cpanelInstaller->checkIfBrizzyProInstalled(),
+            ],
         ];
 
         $this->respond($data);
