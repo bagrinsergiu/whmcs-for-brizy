@@ -165,35 +165,51 @@ class CpanelInstaller
         );
 
 
-        if (array_key_exists('errors',  $userResponse['result'])
-            && (
+        if (array_key_exists('errors',  $userResponse['result']))
+        {
+            if (
                 $userResponse['result']['errors'] === null
                 || (
                     isset($userResponse['result']['errors'][0])
                     && strpos($userResponse['result']['errors'][0], $this->databaseName) !== false
                 )
+            ) {
 
-                || (
+                if (
                     isset($userResponse['result']['errors'][0])
                     && strpos($userResponse['result']['errors'][0], 'already exists') !== false
-                )
-            )
-        )
-        {
-            $grantResponse = $this->cpanel->execute_action(
-                3,
-                'Mysql',
-                'set_privileges_on_database',
-                $this->userName,
-                [
-                    'user' => $this->databaseName,
-                    'database' => $this->databaseName,
-                    'privileges' => 'ALL PRIVILEGES'
-                ]
-            );
+                ) {
+    
+                    $updateUserPass = $this->cpanel->execute_action(
+                        3,
+                        'Mysql',
+                        'set_password',
+                        $this->userName,
+                        [
+                            'user' => $this->databaseName,
+                            'password' => $this->databasePass
+                        ]
+                    );
 
-            return true;
-        }
+                    return true;
+                }
+
+                $grantResponse = $this->cpanel->execute_action(
+                    3,
+                    'Mysql',
+                    'set_privileges_on_database',
+                    $this->userName,
+                    [
+                        'user' => $this->databaseName,
+                        'database' => $this->databaseName,
+                        'privileges' => 'ALL PRIVILEGES'
+                    ]
+                );
+    
+                return true;
+            } 
+            
+        } 
 
         return false;
     }
@@ -576,8 +592,6 @@ class CpanelInstaller
             }
         }
     }
-
-
 
     private function updateInstallationDbData($data) {
          $updatedCount = Capsule::table('brizy_installations')
