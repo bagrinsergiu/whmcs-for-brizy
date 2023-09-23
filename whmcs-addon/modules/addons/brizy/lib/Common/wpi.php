@@ -26,11 +26,20 @@ class WpInstaller
     private $dbPass = '{dbPass}';
     private $hostname = '{hostname}';
 
-
-
     private $wordpress = '{installWordpress}';
     private $brizy = '{installBrizy}';
     private $brizyPro = '{installBrizyPro}';
+    private $brizyWL = false;
+
+    private $brizyProActivationData = [
+        'license' => '{bLicense}',
+        'brizy' => '{bPluginName}',
+        'description' => '{bDescription}',
+        'brizy-prefix' => '{bPrefix}',
+        'support-url' => '{bSupportUrl}',
+        'about-url' => '{bAboutUrl}',
+        'brizy-logo' => '{bLogo}' //(20px x 20px) .svg
+    ];
 
     private $brizyTheme = '{brizyTheme}';
 
@@ -41,6 +50,10 @@ class WpInstaller
         $this->wordpress = $this->wordpress === '1' ? true : false;
         $this->brizy = $this->brizy === '1' ? true : false;
         $this->brizyPro = $this->brizyPro === '1' ? true : false;
+
+        if ($this->brizy === true && !empty($this->brizyProActivationData['brizy'])) {
+            $this->brizyWL = true;
+        }
 
         $this->remoteBrizyArchiveFilePro .= '?token=' . '{bDownloadToken}';
 
@@ -237,19 +250,8 @@ class WpInstaller
         $pluginPath = 'brizy-pro/brizy-pro.php';
         activate_plugin($pluginPath);
 
-        $input = [
-            'license' => '{bLicense}',
-            'brizy' => '{bPluginName}',
-            'description' => '{bDescription}',
-            'brizy-prefix' => '{bPrefix}',
-            'support-url' => '{bSupportUrl}',
-            'about-url' => '{bAboutUrl}',
-            'brizy-logo' => '{bLogo}' //(20px x 20px) .svg
-        ];
-
-
         require_once(ABSPATH . '/wp-content/plugins/brizy-pro/brizy-pro.php');
-        if (!class_exists('BrizyPro_Admin_WhiteLabel') || !BrizyPro_Admin_WhiteLabel::_init()->installWhiteLabel($input)) {
+        if (!class_exists('BrizyPro_Admin_WhiteLabel') || !BrizyPro_Admin_WhiteLabel::_init()->installWhiteLabel($this->brizyProActivationData)) {
             return false;
         }
 
@@ -542,7 +544,7 @@ class WpInstaller
             $steps['unzipBrizy'] = '{LANG.wpi.installer.log.unzipBrizy}';
         }
 
-        if ($this->brizyPro) {
+        if ($this->brizyPro || $this->brizyWL) {
             $steps['downloadBrizyPro'] = '{LANG.wpi.installer.log.downloadBrizyPro}';
             $steps['unzipBrizyPro'] = '{LANG.wpi.installer.log.unzipBrizyPro}';
         }
@@ -551,7 +553,7 @@ class WpInstaller
             $steps['activateBrizy'] = '{LANG.wpi.installer.log.activateBrizy}';
         }
 
-        if ($this->brizyPro) {
+        if ($this->brizyPro || $this->brizyWL) {
             $steps['activateBrizyPro'] = '{LANG.wpi.installer.log.activateBrizyPro}';
         }
 

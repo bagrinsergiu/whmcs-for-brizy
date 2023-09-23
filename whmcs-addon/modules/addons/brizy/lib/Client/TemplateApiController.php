@@ -45,6 +45,7 @@ class TemplateApiController extends DefaultApiController
                 Session::set('theme_id', $themeId);
                 Session::set('theme_name', $demo->name);
                 Session::set('theme_pro', $demo->pro ? 1 : 0);
+                Session::set('brizy_pro', 0);
                 $demoExists = true;
                 break;
             }
@@ -54,6 +55,10 @@ class TemplateApiController extends DefaultApiController
             $addonAvailable = Helpers::getBrizyProProductAddon($productId) ? true : false;
             $productIsBrizyPro = Helpers::isProductBrizyPro($productId);
 
+            if ($productIsBrizyPro) {
+                Session::set('brizy_pro', 1);
+            }
+            
             if ($demo->pro && !$productIsBrizyPro && !$addonAvailable) {
                 $this->respondWithError(Translations::$_['client']['api']['repsonse']['themeSelector']['proThemeUnavailable']);
             }

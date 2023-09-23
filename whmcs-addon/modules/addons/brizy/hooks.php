@@ -18,8 +18,6 @@ add_hook('ClientAreaProductDetailsOutput', 1, function($vars) {
     return $dispatcher->dispatch($action, $vars);
 });
 
-
-
 /**
  * Upon completion of checkout once the order has been created, invoice generated and all email notifications sent
  */
@@ -30,6 +28,7 @@ add_hook('AfterShoppingCartCheckout', 1, function($vars) {
     $themeId = Session::get('theme_id');
     $themeName = Session::get('theme_name');
     $themeIsPro = Session::get('theme_pro');
+    $brizyPro = Session::get('brizy_pro');
 
     if ($themeId) {
         Session::clear();
@@ -39,12 +38,11 @@ add_hook('AfterShoppingCartCheckout', 1, function($vars) {
                 'order_id' => $vars['OrderID'],
                 'theme_id' => $themeId,
                 'name' => $themeName,
-                'pro' => $themeIsPro,
+                'pro' => ($themeIsPro || $brizyPro),
             ]
         );
         }
 });
-
 
 /**
  * Executes upon successful completion of the module function.
