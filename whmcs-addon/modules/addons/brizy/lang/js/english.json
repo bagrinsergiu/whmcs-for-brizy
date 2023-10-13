@@ -1,7 +1,7 @@
 {
     "themeSelector": {
-        "header" : "Chose your website",
-        "subHeader" : "Select one of the premade websites to be auto instaled on your hosting account",
+        "header" : "Choose your website",
+        "subHeader" : "Select one of the premade websites to be auto installed on your hosting account",
         "all" : "All",
         "free" : "Free",
         "pro" : "Pro",

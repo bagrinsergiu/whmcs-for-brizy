@@ -86,8 +86,20 @@ Class BrizyApi {
         return $this->request('licences/' . $license, 'DELETE');
     }
 
-    public function getDemos() {
-        return $this->request('https://websitebuilder-demo.net/wp-json/demos/v1/demos');
+    public function getDemos() {   
+
+        $changeDemoDomain = Settings::getFromFile('changeDemoDomain');
+
+        $data = $this->request('https://websitebuilder-demo.net/wp-json/demos/v1/demos');
+
+        if ($changeDemoDomain && isset($data->demos)) {
+            foreach($data->demos as $key => $demo) {
+                $demo->url = str_replace('https://websitebuilder-demo.net', $changeDemoDomain, $demo->url);
+                $data->demos->$key = $demo;
+            }
+        }
+
+        return $data;
     }
 
     public function getLatestError() {

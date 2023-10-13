@@ -23,6 +23,7 @@ class TemplateApiController extends DefaultApiController
     public function setInstallerTemplate() {
         $themeId = (int)$_GET['themeId'];
         $productId = (int)$_GET['productId'];
+        $domain = (int)$_GET['domain'];
 
         $product = \WHMCS\Product\Product::find($productId);
 
@@ -33,43 +34,41 @@ class TemplateApiController extends DefaultApiController
         $brizyApi = new BrizyApi();
         $themes = $brizyApi->getDemos();
 
-        $demoExists = false;
-
         if (!$themes || !isset($themes->demos)) {
             $this->respondWithError(Translations::$_['client']['api']['repsonse']['themeSelector']['setThemeError']);
         }
-
+        
         foreach($themes->demos as $demo) {
 
             if ($demo->id == $themeId) {
+
                 Session::set('theme_id', $themeId);
                 Session::set('theme_name', $demo->name);
                 Session::set('theme_pro', $demo->pro ? 1 : 0);
                 Session::set('brizy_pro', 0);
-                $demoExists = true;
+                
+                $addonAvailable = Helpers::getBrizyProProductAddon($productId) ? true : false;
+                $productIsBrizyPro = Helpers::isProductBrizyPro($productId);
+    
+                if ($productIsBrizyPro) {
+                    Session::set('brizy_pro', 1);
+                    $theme['brizy_pro'] = 1;
+                }
+
+                if ($demo->pro && !$productIsBrizyPro && !$addonAvailable) {
+                    $this->respondWithError(Translations::$_['client']['api']['repsonse']['themeSelector']['proThemeUnavailable']);
+                }
+    
+                $this->respond([
+                    'pro' => $demo->pro,
+                    'name' => $demo->name,
+                    'id' => $demo->id,
+                    'addon_available' => $addonAvailable,
+                    'product_pro' => $productIsBrizyPro,
+                ]);
+
                 break;
             }
-        }
-
-        if ($demoExists) {
-            $addonAvailable = Helpers::getBrizyProProductAddon($productId) ? true : false;
-            $productIsBrizyPro = Helpers::isProductBrizyPro($productId);
-
-            if ($productIsBrizyPro) {
-                Session::set('brizy_pro', 1);
-            }
-            
-            if ($demo->pro && !$productIsBrizyPro && !$addonAvailable) {
-                $this->respondWithError(Translations::$_['client']['api']['repsonse']['themeSelector']['proThemeUnavailable']);
-            }
-
-            $this->respond([
-                'pro' => $demo->pro,
-                'name' => $demo->name,
-                'id' => $demo->id,
-                'addon_available' => $addonAvailable,
-                'product_pro' => $productIsBrizyPro,
-            ]);
         }
 
         $this->respondWithError(Translations::$_['client']['api']['repsonse']['themeSelector']['notPossibleToSet']);
@@ -84,5 +83,11 @@ class TemplateApiController extends DefaultApiController
         $data['themeId'] = Session::get('theme_id');
 
         $this->respond($data);
+    }
+
+    public function getDemos() {
+        $brizyApi = new BrizyApi();
+        $themes = $brizyApi->getDemos();
+        return $this->respond($themes);
     }
 }

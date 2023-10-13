@@ -60,3 +60,6 @@ Your website will be ready in a moment!
 Thanks!
 {companyName} Team
 ';
+
+$_ADDONLANG['client']['template']['order']['lackOfLicenses']['header'] = "Template selection:";
+$_ADDONLANG['client']['template']['order']['lackOfLicenses']['msg'] = "There was a problem with the product configuration, unfortunately you can't select a predefined template for this order, please contact the administrator";

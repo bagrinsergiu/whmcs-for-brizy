@@ -609,4 +609,22 @@
     .brz-theme-selector {
         position: relative;
     }
+
+
+    @media (max-width: 500px) {
+        .brz-filter {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            padding: 10px;
+
+            .filter-count {
+                margin-left: auto;
+                position: absolute;
+                right: 10px;
+                top: 22px;
+            }
+        }
+    }
+
 }

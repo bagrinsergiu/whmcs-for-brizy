@@ -134,6 +134,12 @@ function brizy_config()
 ',
                 'Description' => 'Your css styles, to personalize theme selector',
             ],
+            'generate_new_licenses_automaticaly' => [
+                'FriendlyName' => 'Generate new licenses automatically',
+                'Type' => 'yesno',
+                'Description' => 'When this option is enabled, if there are no free licenses, a new one is generated when the order is placed.',
+                'Default' => 'yes'
+            ],
         ]
     ];
 }

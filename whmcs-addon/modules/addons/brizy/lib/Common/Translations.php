@@ -106,6 +106,5 @@ class Translations
 
         return $result;
     }
-
 }
 

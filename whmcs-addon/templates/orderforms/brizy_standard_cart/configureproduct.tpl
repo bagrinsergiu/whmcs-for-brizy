@@ -33,7 +33,7 @@ var _localLang = {
                         <div class="product-info">
                             <p class="product-title">{$productinfo.name}</p>
                             <p>{$productinfo.description}</p>
-                            <!-- Brizy START-->
+                            <!-- Installer START-->
                             {if \class_exists('\WHMCS\Module\Addon\Brizy\Common\Settings')}
                                 
                                 {assign var=brzData value=\WHMCS\Module\Addon\Brizy\Common\Session::get()}
@@ -48,7 +48,7 @@ var _localLang = {
                                     {/if}
                                 {/if}
                             {/if}
-                            <!-- Brizy END-->
+                            <!-- Installer END-->
                         </div>
 
                         <div class="alert alert-danger w-hidden" role="alert" id="containerProductValidationErrors">

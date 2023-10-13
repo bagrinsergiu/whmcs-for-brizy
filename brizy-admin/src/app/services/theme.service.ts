@@ -13,7 +13,7 @@ export class ThemeService {
     constructor(private http: HttpClient) { }
 
     getAll(): Observable<any> {
-        return this.http.get<any>(`https://websitebuilder-demo.net/wp-json/demos/v1/demos`);
+        return this.http.get<any>(`index.php?m=brizy&action=template&execute=getDemos`);
     }
 
     setTemplate(themeId: number, productId: number): Observable<ApiResponse<{pro: boolean; name: string; id: number; addon_available: boolean; product_pro: boolean}>> {

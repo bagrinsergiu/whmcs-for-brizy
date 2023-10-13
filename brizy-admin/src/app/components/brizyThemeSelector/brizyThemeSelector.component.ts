@@ -57,8 +57,8 @@ export class BrizyThemeSelectorComponent implements OnInit {
         this.loadingData = true;
         this.themeService.getAll().subscribe({
             next: (response) => {
-                const demos = Object.entries(response.demos).map(([k, v]) => (v));
-                const terms = Object.entries(response.terms).map(([k, v]) => (v));
+                const demos = Object.entries(response.data.demos).map(([k, v]) => (v));
+                const terms = Object.entries(response.data.terms).map(([k, v]) => (v));
                 this.themes.demos = demos as Demo[];
                 this.themes.terms = terms as Term[];
                 this.loadingData = false;

@@ -32,7 +32,10 @@ export class ErrorInterceptor implements HttpInterceptor {
                     return;
                 }
 
-                let errors = response.error.errors;
+                if (response?.error?.type === 'abort') {
+                    return;
+                }
+
                 let errorString = '';
 
                 if (typeof response?.error?.data?.error?.message !== 'undefined') {

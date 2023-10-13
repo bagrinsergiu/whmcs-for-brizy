@@ -8,12 +8,28 @@
         </div>
 
         <div class="cart-body">
+            {assign var=$translations value=(\WHMCS\Module\Addon\Brizy\Common\Translations::set())}
 
-            <!-- Brizy Theme Selector START -->
+            <!-- Theme Selector START -->
            
             {assign var=showBrizyInstaller value=(\class_exists('\WHMCS\Module\Addon\Brizy\Common\Settings') && (\WHMCS\Module\Addon\Brizy\Common\Helpers::isProductBrizyPro($pid) || \WHMCS\Module\Addon\Brizy\Common\Helpers::isProductBrizyFree($pid))) }
             
+            {assign var=showLackOfLicensesMsg value=(
+                \class_exists('\WHMCS\Module\Addon\Brizy\Common\Settings') 
+                && \WHMCS\Module\Addon\Brizy\Common\Helpers::isProductBrizyPro($pid, false) 
+                && !\WHMCS\Module\Addon\Brizy\Common\Helpers::checkForFreeLicenses(true)
+                && \WHMCS\Module\Addon\Brizy\Common\Settings::get('generate_new_licenses_automaticaly') !== 'on') 
+            }
+            
+            {if $showLackOfLicensesMsg}
+                <div style="margin:0 0 10px 0;padding:10px 35px;background-color:#ffffd2;color:#555;font-size:16px;text-align:center;">
+                <strong> {\WHMCS\Module\Addon\Brizy\Common\Translations::$_['client']['template']['order']['lackOfLicenses']['header']}</strong>
+                {\WHMCS\Module\Addon\Brizy\Common\Translations::$_['client']['template']['order']['lackOfLicenses']['msg']}
+                </div>
+            {/if}
+
             {if $showBrizyInstaller}
+
                 {assign var=customCss value=\WHMCS\Module\Addon\Brizy\Common\Settings::get('theme_selector_custom_css')}
                 {if $customCss}
                     <style>
@@ -27,7 +43,9 @@
                 <script src="{\WHMCS\Module\Addon\Brizy\Common\Settings::getWHMCSDomain()}modules/addons/brizy/apps/brizy-admin/polyfills.js?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}" defer></script>
                 <script src="{\WHMCS\Module\Addon\Brizy\Common\Settings::getWHMCSDomain()}modules/addons/brizy/apps/brizy-admin/main.js?h={\WHMCS\Module\Addon\Brizy\Common\Helpers::getHash()}" defer></script>
             {/if}
-            <!-- Brizy Theme Selector END -->
+
+            
+            <!-- Theme Selector END -->
 
             <div class="header-lined">
                 <h1 class="font-size-36">{$LANG.domaincheckerchoosedomain}</h1>

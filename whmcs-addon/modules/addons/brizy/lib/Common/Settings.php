@@ -45,4 +45,32 @@ class Settings
         }
         return rtrim($settingsDomain, "/").'/'; ;
     }
+
+    /**
+     * Returns config data from file
+     *
+     * @return mixed
+     */
+    public static function getFromFile($param){
+        $file = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.'custom_setting.json';
+
+        if (!file_exists($file)) {
+            $data = file_get_contents($file);
+
+            $settingsData = json_decode($data, true);
+
+            $jsonError = json_last_error();
+
+            if (is_null($settingsData) && $jsonError == JSON_ERROR_NONE) {
+                return null;
+            }
+
+            if (isset($settingsData[$param])) {
+                return $settingsData[$param];
+            }
+        }
+
+        return null;
+    }
+
 }
