@@ -41,6 +41,7 @@ export class InstallerComponent implements OnInit {
 
     loadingData = false;
     initData: InitData;
+    initDataFailed = false;
 
     defaultConfirmModalSettings = { backdrop: false, keyboard: false, centered: true, modalDialogClass: 'panel panel-primary', windowClass: 'modal whmcs-modal fade in show'};
 
@@ -189,13 +190,15 @@ export class InstallerComponent implements OnInit {
 
 
     getInitData() {
+        this.loadingData = true;
         this.installerService.initData(this.serviceId).subscribe({
             next: (response) => {
                 this.initData = response.data;
+                this.loadingData = false;
             },
             error: () => {
-
-
+                this.loadingData = false;
+                this.initDataFailed = true;
             },
         });
 

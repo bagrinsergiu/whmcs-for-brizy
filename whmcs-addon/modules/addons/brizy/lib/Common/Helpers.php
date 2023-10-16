@@ -252,7 +252,7 @@ class Helpers
         $service = \WHMCS\Service\Service::where('id', $serviceId)
             ->first();
 
-        if ($service && $service->clientId === $userData->id) {
+        if ($service && $service->clientId == $userData->id) {
             return true;
         }
 
@@ -489,6 +489,11 @@ class Helpers
      * @return string
      */
     public static function forceBrizyTplProdyuctUrl($productUrl) {
+
+        if(Settings::getFromFile('disableBrizyTemplateForcing')){
+            return $productUrl;
+        }
+
         if (strpos($productUrl, '?')) {
             $productUrl .= '&';
         } else {

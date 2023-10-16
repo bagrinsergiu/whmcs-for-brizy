@@ -55,7 +55,8 @@
             "uploadingScript" : "Uploading the installation script",
             "runningScirpt" : "Running script",
             "ftpConnectionTest" : "Testing FTP connection"
-        }
+        },
+        "initError": "<strong>Installer: </strong>The installer cannot be used at this time..."
     }
 
 }

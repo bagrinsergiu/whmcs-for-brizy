@@ -178,4 +178,7 @@
             </div>
         </div>
     </ng-containter>
+
+    <div *ngIf="initDataFailed" class="installer-init-error" [innerHTML]="'installer.initError' | translate"></div>
+
 </div>

@@ -5,6 +5,8 @@
 .brizy-installer-container {
 
     position: relative;
+    min-height: 70px;
+
     .loader-component {
         z-index: 1;
         position: absolute;
@@ -98,5 +100,13 @@
         margin-top: 15px;
     }
 
+    }
+
+    .installer-init-error {
+        border-radius: 5px;
+        padding: 8px 5px;
+        background: #ffffd2;
+        color: #555;
+        font-size: 14px;
     }
 }
