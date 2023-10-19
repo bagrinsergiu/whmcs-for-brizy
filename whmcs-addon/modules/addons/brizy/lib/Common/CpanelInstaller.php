@@ -95,7 +95,7 @@ class CpanelInstaller
             ], '');
 
             if ($results['result'] === 'success') {
-                $this->databasePass = $results['password'];
+                $this->databasePass = html_entity_decode($results['password']);
             }
         }
 
