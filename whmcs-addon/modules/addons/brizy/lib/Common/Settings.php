@@ -54,7 +54,7 @@ class Settings
     public static function getFromFile($param){
         $file = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.'custom_settings.json';
 
-        if (!file_exists($file)) {
+        if (file_exists($file)) {
             $data = file_get_contents($file);
 
             $settingsData = json_decode($data, true);
