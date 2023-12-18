@@ -246,13 +246,18 @@ class Helpers
      */
     public static function checkIfCanInstallBrizy($serviceId)
     {
-
-        $currentUser =  new \WHMCS\Authentication\CurrentUser;
-        $userData = $currentUser->user();
+       $currentUser =  new \WHMCS\Authentication\CurrentUser;
         $service = \WHMCS\Service\Service::where('id', $serviceId)
             ->first();
 
-        if ($service && $service->clientId == $userData->id) {
+        $serviceOwnerId = $service->client->owner()->id;
+        $clientOwnerId = $currentUser->client()->owner()->id;
+
+        if ($service 
+            && (int)$serviceOwnerId != 0 && (int)$clientOwnerId != 0
+            && $serviceOwnerId == $clientOwnerId
+            && $service->product->servertype == 'cpanel'
+        ) {
             return true;
         }
 
