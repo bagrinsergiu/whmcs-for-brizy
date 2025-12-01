@@ -1,0 +1,30 @@
+<span mat-dialog-title>
+    <h2>
+        Automatic project deployment: <strong>{{data.project.name}}</strong>
+    </h2>
+</span>
+<mat-dialog-content class="mat-typography">
+    <div *ngIf="loading" class="cloud-loader">
+        <mat-spinner></mat-spinner>
+        <div class="info">
+            <div class="warning">Please keep this browser window open - your site is being deployed to your account</div>
+            <div class="building-text">{{deploymentText}}</div>
+        </div>
+    </div>
+    <div class="installer">
+        <div class="description">
+            <div>
+                Your selected project will be uploaded to your account.
+            </div>
+            <div>
+                Tap <strong>Start”</strong> to begin the installation.
+            </div>
+        </div>
+        <div class="actions">
+            <button mat-raised-button color="accent" (click)=startDeployment()>Start</button>
+        </div>
+    </div>
+ </mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>
+    Publish the project: <strong>{{ data.project.name }}</strong>
+</h2>
+<mat-dialog-content class="mat-typography">
+    <div *ngIf="loading" class="cloud-loader">
+        <mat-spinner></mat-spinner>
+    </div>
+    <div class="publish-title">How to Publish Your Page?</div>
+    <div class="publish-options">
+        <div class="option">
+            <div class="icon"></div>
+            <div class="title">Custom Domain</div>
+            <div class="description">
+                Use your own domain to deploy your website
+            </div>
+            <div class="active-domain" *ngIf="domain">
+                Currently available under a domain:
+                <br/>
+                <strong>{{domain.name}}</strong>
+            </div>
+            <div  *ngIf="!domain" class="actions">
+                <button mat-raised-button color="primary" (click)="domainEdit(false)">Chose</button>
+            </div>
+            <div  *ngIf="domain" class="actions domain-actions">
+                <button mat-raised-button color="primary" (click)="domainEdit(false)">Change</button>
+                <button mat-raised-button color="accent" (click)="domainDelete()">Delete</button>
+            </div>
+        </div>
+        <div class="option">
+            <div class="icon"></div>
+            <div class="title">Subdomain</div>
+            <div class="description">
+                Use a free subdomain using our <strong>{{data.project.preview_domain}}</strong> name
+            </div>
+            <div class="active-domain" *ngIf="subdomain">
+                Currently available under a subdomain:
+                <br/>
+                <strong>{{subdomain.name}}.{{data.project.preview_domain}}</strong>
+            </div>
+            <div class="actions">
+                <button mat-raised-button color="primary" (click)="domainEdit(true)">Change</button>
+            </div>
+        </div>
+        <div *ngIf="data.deploy == 1" class="option">
+            <div class="icon"></div>
+            <div class="title">Self-hosted</div>
+            <div class="description">
+                You can upload the files to the server manually or use the automatic deployment process.
+            </div>
+
+            <div class="actions domain-actions">
+                <button mat-raised-button color="primary" (click)="download()">Download</button>
+                <button mat-raised-button color="accent" (click)="deploy()">Deploy</button>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

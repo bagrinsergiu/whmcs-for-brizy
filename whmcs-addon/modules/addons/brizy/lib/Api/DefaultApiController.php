@@ -50,6 +50,18 @@ class DefaultApiController
 
         $this->input = $data;
     }
+
+    /**
+     * Input - get
+     *
+     * @param string $name
+     * @param string $default
+     * @return mixed
+     */
+    public function inputGet($name, $default = null) {
+        return isset($_GET[$name]) ? $_GET[$name] : $default;
+    }
+
     /**
      * Geter - statusCode
      *
@@ -156,6 +168,7 @@ class DefaultApiController
             $response['messages'] = $this->getMessages();
         }
 
+        header('Content-Type: application/json; charset=utf-8');
         http_response_code($this->getStatusCode());
 
         echo json_encode($response);

@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>
+    Finish generating your site: {{data.title}}
+
+</h2>
+<mat-dialog-content class="mat-typography">
+
+    <div *ngIf="saving" class="cloud-loader">
+
+        <div class="info">
+            <div class="building-text">Your project <strong>"{{data.title}}"</strong>  is being saved.</div>
+        </div>
+
+        <mat-spinner></mat-spinner>
+    </div>
+    <div class="ai-editor-note">
+        <strong>Please do not close this browser or window.</strong>
+        <div>
+            Your page is almost ready. You’re about to enter the AI editor, where you can regenerate the entire page or specific sections as needed.
+        </div>
+
+        <div>
+            Once you’re satisfied with the result, return to this window and click “Save Project.”
+            <br/>
+            Your project will then be saved, and you’ll be able to continue full editing in our main editor.
+        </div>
+
+        <div>
+            Note: After saving the project, further use of the AI editor for this project will no longer be possible.
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <div class="action-buttons"><button mat-flat-button color="primary" (click)="openAiEditSite()">Open AI Editor</button> <button mat-flat-button color="accent" (click)="saveAiProject()">Save AI Project</button></div> <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

@@ -1,0 +1,70 @@
+
+.info {
+    margin-bottom: 15px;
+}
+.members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7.5px;
+    position: relative;
+    min-height: 200px;
+
+    .member {
+        padding: 15px 15px 0 15px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+
+        .email {
+            width: 40%;
+            font-weight: bold;
+        }
+        > div {
+            // margin-bottom: 15px;
+
+
+        }
+
+        > mat-form-field {
+            margin-bottom: 0px !important;
+        }
+
+        &:hover {
+            background-color: #dbdbdb;
+        }
+
+        .actions {
+            min-width: 100px;
+        }
+    }
+}
+
+.member-invite {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: flex;
+    margin: 10px 0;
+    padding: 15px 15px 0;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+
+    .email-field {
+        width: 50%;
+    }
+}
+
+.status {
+    display: block;
+    font-size: .9em;
+    line-height: 22px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    padding: 2px 6px;
+}

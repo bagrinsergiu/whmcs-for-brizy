@@ -1,0 +1,37 @@
+
+
+<div class="mat-typography">
+    <div class="title">
+        Choose a template for your site
+    </div>
+
+    <div *ngIf="loadingTemplates" class="cloud-loader">
+        <mat-spinner></mat-spinner>
+    </div>
+    <div class="templates-container">
+       <div class="templates-filter">
+            <div class="categories">
+                <div class="category-select" [ngClass]="{'selected': this.selectedCategory.slug === category.slug}" (click)="selectCategory(category)" *ngFor="let category of categories">
+                    {{category.title}}
+                </div>
+            </div>
+       </div>
+       <div class="templates">
+            <div class="template" id="template-id-{{template.id}}" [ngClass]="{'selected': template.id === selectedTemplate.id}" *ngFor="let template of filterdTemplates">
+                <div class="img-preview">
+                    <img [src]="template.featured_image" />
+                </div>
+                <div *ngIf="template.preview_url || template.id !== selectedTemplate.id" class="actions">
+                    <button *ngIf="template.preview_url" mat-stroked-button color="default" (click)="previewTemplate(template);$event.preventDefault(); $event.stopPropagation()">Preview</button>
+                    <button *ngIf="template.id !== selectedTemplate.id" mat-flat-button color="primary" (click)="selectTemplate(template);$event.preventDefault(); $event.stopPropagation()">Select</button>
+                </div>
+                <div class="title">
+                    {{template.title}}
+                </div>
+                <div *ngIf="template.id === selectedTemplate.id" class="selected-badge">
+                    selected
+                </div>
+            </div>
+       </div>
+    </div>
+ </div>

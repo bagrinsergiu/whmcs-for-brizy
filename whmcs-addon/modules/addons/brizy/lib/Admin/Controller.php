@@ -16,6 +16,10 @@ class Controller {
      */
     public function index($vars)
     {
+        //disable admin area for now (WP)
+        if (true) {
+            return 'There is no admin output for this module';
+        }
 
         $modulelink = $vars['modulelink']; // eg. addonmodules.php?module=addonmodule
         $version = $vars['version']; // eg. 1.0

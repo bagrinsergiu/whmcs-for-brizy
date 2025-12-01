@@ -43,7 +43,7 @@ export class InstallerComponent implements OnInit {
     initData: InitData;
     initDataFailed = false;
 
-    defaultConfirmModalSettings = { backdrop: false, keyboard: false, centered: true, modalDialogClass: 'panel panel-primary', windowClass: 'modal whmcs-modal fade in show'};
+    defaultConfirmModalSettings = { backdrop: false, keyboard: false, centered: true, modalDialogClass: 'panel-primary', windowClass: 'modal whmcs-modal fade in show'};
 
     constructor(
         private installerService: InstallerService,

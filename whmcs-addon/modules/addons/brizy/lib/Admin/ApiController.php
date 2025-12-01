@@ -37,20 +37,7 @@ class ApiController extends DefaultApiController {
      */
     public function getAllLicenses() {
 
-        $licensesApiNonActive =  $this->brizyApi->getLicenses('non-active');
-
-
-        if ($licensesApiNonActive !== false || is_array($licensesApiNonActive)) {
-            Helpers::synchronizeLicenses($licensesApiNonActive);
-            // $this->respondWithError($this->brizyApi->getLatestError());
-        }
-
-        $licensesApiActive =  $this->brizyApi->getLicenses('active');
-
-        if ($licensesApiActive !== false || is_array($licensesApiActive)) {
-            Helpers::synchronizeLicenses($licensesApiActive);
-            // $this->respondWithError($this->brizyApi->getLatestError());
-        }
+        Helpers::synchronizeAllLicenses();
 
         $licenses = Capsule::table('brizy_licenses')
             ->orderBy('id', 'desc')

@@ -5,7 +5,8 @@
 export const environment = {
     production: false,
     whmcsPath: '',
-    i18nPath: null
+    i18nPath: null,
+    apiUrl: 'https://domapi.mserwis.pl/whmcs/',
 };
 
 /*

@@ -50,6 +50,14 @@ class CpanelInstaller
             $userName = $service->serverModel->username;
         }
 
+        if (!$userName) {
+            $userName = 'TMP';
+        }
+
+        if (!$password) {
+            $password = 'TMP';
+        }
+
         $this->cpanelAccessData = [
             'host'        =>  $service->serverModel->hostname, // required
             'username'    =>  $userName, // required
@@ -59,6 +67,7 @@ class CpanelInstaller
 
         $this->cpanel = new Cpanel($this->cpanelAccessData);
         $this->cpanel->setTimeout(30);
+        $this->cpanel->setConnectionTimeout(5);
 
         $this->userName = $service->username;
         $this->databaseName = $this->userName . '_' . 'wp';
@@ -179,7 +188,7 @@ class CpanelInstaller
                     isset($userResponse['result']['errors'][0])
                     && strpos($userResponse['result']['errors'][0], 'already exists') !== false
                 ) {
-    
+
                     $updateUserPass = $this->cpanel->execute_action(
                         3,
                         'Mysql',
@@ -205,11 +214,11 @@ class CpanelInstaller
                         'privileges' => 'ALL PRIVILEGES'
                     ]
                 );
-    
+
                 return true;
-            } 
-            
-        } 
+            }
+
+        }
 
         return false;
     }

@@ -1,0 +1,190 @@
+.site-name {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 15px 0px;
+
+    .business-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        .lang-select {
+            width: 100px;
+            flex: 0 1 auto;
+        }
+    }
+
+    mat-form-field {
+        width: auto;
+        flex: 1 1 auto;
+    }
+
+    .offer-ideas-button-container {
+        display: flex;
+        flex-direction: row;
+        gap:15px;
+    }
+
+    .ideas-container {
+
+        mat-form-field {
+            width: 100%;
+        }
+
+        .ideas-title {
+            font-weight: bold;
+        }
+
+        .ideas-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+
+            .idea {
+                display: block;
+                padding: 10px 15px;
+                border-radius: 15px;
+                border: 1px solid #ccc;
+                cursor: pointer;
+                &:hover {
+                    background-color: #b4b4b4;
+                }
+            }
+        }
+    }
+}
+
+.latest-ai-projects {
+    margin: 15px 0px;
+    display: flex;
+    flex-direction: column;
+    > .title {
+        font-weight: bold;
+    }
+
+    > .hint {
+        color: #ccc;
+        font-size: 12px;
+    }
+    .projects-list {
+        margin: 15px 0px;
+        display: flex;
+        gap: 15px;
+
+        > div {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding: 2.5px 2.5px 2.5px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            background: #00000015;
+            &:hover {
+                background: #0000002b;
+            }
+        }
+    }
+}
+
+.offer-ideas-box {
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+.industry-select {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.additional-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    mat-form-field {
+        width: 100%;
+    }
+
+    .vertical-inputs {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;;
+        > div {
+            width: calc(50% - 15px/2);
+        }
+    }
+}
+
+
+.form-title {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    .hint {
+        color: #ccc;
+        font-size: 12px;
+    }
+}
+
+
+.step-button-container {
+    display: flex;
+    justify-content: center;;
+}
+
+mat-progress-bar {
+    margin: 15px 0px;
+}
+
+.cloud-loader {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+
+    .warning {
+        font-weight: bold;
+    }
+    .info {
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+}
+
+
+
+
+::ng-deep {
+    .mdc-list-item__primary-text {
+        width:  100%;
+    }
+    .autocomplete-option {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        gap: 15px;
+        > div {
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+    .flag-lang {
+        border-radius: 3px;
+        border: 1px solid #ccc;
+        width: 41px;
+        padding: 2px;
+        height: 24px;
+    }
+}
+
+.map-selected {
+    color: green
+}

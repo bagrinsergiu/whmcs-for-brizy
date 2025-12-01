@@ -1,0 +1,7 @@
+<div mat-dialog-content class="dialog-content">
+    <p [innerHTML]="data.text" [ngClass]="data.textAlign"></p>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-flat-button (click)="cancel()" *ngIf="data.canCancel">Cancel</button>
+    <button mat-flat-button (click)="ok()" color="primary">{{ data.confirmText}}</button>
+</div>

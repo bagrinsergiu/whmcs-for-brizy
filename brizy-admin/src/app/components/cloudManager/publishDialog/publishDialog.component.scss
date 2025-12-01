@@ -1,0 +1,56 @@
+.publish-title {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.publish-options {
+    display: flex;
+    gap: 15px;
+    flex-direction: row;
+
+    .option {
+        display: flex;
+        gap: 15px;
+        flex-direction: column;
+        flex: 1 1 30%;
+
+        border: 1px solid #ccc;
+        padding: 15px;
+        border-radius: 5px;
+
+        &:hover {
+            background-color: #00000010;
+        }
+
+        .title {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .description {
+            font-style: italic;
+            text-align: center;
+            margin-bottom: auto;
+        }
+
+        .actions {
+            margin-top: 15px;
+            text-align: center;
+            &.domain-actions {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+        }
+    }
+
+    .active-domain {
+        text-align: center;
+        background: #686868;
+        border-radius: 5px;
+        padding: 5px;
+        color: #fff;
+        margin-top: auto;
+    }
+}

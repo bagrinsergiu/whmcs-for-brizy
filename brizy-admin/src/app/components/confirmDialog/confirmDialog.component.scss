@@ -1,0 +1,11 @@
+.dialog-content {
+    margin-top: 15px;
+    color: #000 !important;
+
+    p {
+        &:not(.text-left):not(.text-right) {
+            text-align: center;
+        }
+    }
+    
+}

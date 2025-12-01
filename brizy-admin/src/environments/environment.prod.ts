@@ -11,5 +11,6 @@ if (!whmcsPath && typeof whmcsBaseUrl !== 'undefined') {
 export const environment = {
     production: true,
     whmcsPath: whmcsPath,
-    i18nPath: whmcsPath + '/modules/addons/brizy/lang/js'
+    i18nPath: whmcsPath + '/modules/addons/brizy/lang/js',
+    apiUrl: 'https://domapi.mserwis.pl/whmcs/',
 };

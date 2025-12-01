@@ -28,6 +28,10 @@ class ClientDispatcher {
             $controller = new ApiController();
             $action = isset($_REQUEST['execute']) ? $_REQUEST['execute'] : '';
         }
+        else if ($action === 'cloud') {
+            $controller = new CloudApiController();
+            $action = isset($_REQUEST['execute']) ? $_REQUEST['execute'] : '';
+        }
         else if ($action === 'template') {
             $controller = new TemplateApiController();
             $action = isset($_REQUEST['execute']) ? $_REQUEST['execute'] : '';

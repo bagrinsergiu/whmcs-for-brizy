@@ -1,0 +1,22 @@
+
+.domain-change-container {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 15px;
+    margin-top: 15px;
+    mat-form-field {
+        width: 100%;
+        text-align: right;
+
+        ::ng-deep .subdomain-input {
+            text-align: right;
+        }
+        .subdomain-name {
+            font-weight: bold;
+            margin-right: 15px;
+            color: #000;
+        }
+    }
+
+}

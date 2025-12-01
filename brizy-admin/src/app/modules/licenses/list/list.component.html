@@ -57,8 +57,14 @@
                     {{license.license}}
                 </td>
                 <td class="text-center">
-                    <span *ngIf="!license.user_id" class="badge badge-secondary">Free</span>
-                    <span *ngIf="license.user_id" class="badge badge-success">Assigned</span>
+                    <ng-container *ngIf="license.activation_domain">
+                        <span *ngIf="!license.user_id" class="badge badge-secondary">Assigned - elsewhere</span>
+                        <span *ngIf="license.user_id" class="badge badge-success">Assigned</span>
+                    </ng-container>
+                    <ng-container *ngIf="!license.activation_domain">
+                        <span *ngIf="!license.user_id" class="badge badge-secondary">Free</span>
+                        <span *ngIf="license.user_id" class="badge badge-success">Assigned</span>
+                    </ng-container>
                 </td>
                 <td class="text-center">
                     <span *ngIf="!license.clientData">-</span>

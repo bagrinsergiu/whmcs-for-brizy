@@ -1,0 +1,104 @@
+
+
+<div class="cloud-panel">
+
+    <div class="panel-menu">
+
+        <div class="filters">
+            <mat-form-field  appearance="outline" style="margin-bottom: -1.25em">
+                <mat-label>Search in projects</mat-label>
+                <mat-icon matIconPrefix>search</mat-icon>
+                <input [(ngModel)]="searchQuery" type="text" matInput placeholder="Search in projects">
+
+            </mat-form-field>
+        </div>
+        <div>
+            List of your projects
+        </div>
+        <div class="members-panel">
+            <button mat-raised-button color="default"
+                [matBadge]="membersCount" matBadgePosition="after" matBadgeColor="accent" (click)="membersEditor()">
+                <mat-icon matIconPrefix>people</mat-icon>Manage members
+            </button>
+        </div>
+    </div>
+    <div class="projects">
+
+        <div *ngIf="loading" class="cloud-loader">
+            <mat-spinner></mat-spinner>
+        </div>
+
+        <ng-container>
+            <div class="no-projects" *ngIf="!loading && projects.length === 0">
+                You don't have any projects created.
+                <br>
+                Below, you can add a blank project or start generating a web page using AI.
+            </div>
+            <div class="project" *ngFor="let project of filteredProjects">
+                <div class="project-icon" ngSwitch="website">
+                    <img *ngSwitchCase="website" src="modules/addons/brizy/apps/brizy-admin/assets/images/website-thumb.jpg" />
+                    <img *ngSwitchCase="popup" src="modules/addons/brizy/apps/brizy-admin/assets/images/popup-thumb.jpg" />
+                    <img *ngSwitchCase="story" src="modules/addons/brizy/apps/brizy-admin/assets/images/story-thumb.jpg" />
+                    <img *ngSwitchDefault src="modules/addons/brizy/apps/brizy-admin/assets/images/website-thumb.jpg" />
+                </div>
+                <div class="project-details">
+                    <div class="project-name">{{project.name}}</div>
+                    <div class="project-desc">
+                        <a *ngIf="project.mainDomain" target="_blank" href="{{project.mainDomain}}">{{project.mainDomain}}</a>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <div class="buttons">
+                        <button mat-raised-button color="primary" (click)="projectEdit(project)">Edit</button>
+                    </div>
+                    <div class="project-menu">
+                        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+
+                                <button (click)="projectRename(project)" mat-menu-item>
+                                    <mat-icon>edit</mat-icon>
+                                    <span>Rename</span>
+                                </button>
+                                <button (click)="projectPublish(project)" mat-menu-item>
+                                    <mat-icon>input_circle</mat-icon>
+                                    <span>Publish</span>
+                                </button>
+                                <button (click)="projectDownload(project)" mat-menu-item>
+                                    <mat-icon>download</mat-icon>
+                                    <span>Download</span>
+                                </button>
+                                <button (click)="projectPreview(project)" mat-menu-item>
+                                    <mat-icon>preview</mat-icon>
+                                    <span>Preview</span>
+                                </button>
+                                <button (click)="projectDelete(project)" mat-menu-item>
+                                    <mat-icon>delete</mat-icon>
+                                    <span>Delete</span>
+                                </button>
+                        </mat-menu>
+                    </div>
+
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <div class="bottom-menu">
+        <div class="empty-project">
+            <mat-form-field  appearance="outline">
+                <mat-label>Project Name</mat-label>
+                <input [(ngModel)]="newProjectName" type="text" matInput placeholder="Your project name">
+
+            </mat-form-field>
+            <button mat-raised-button color="default" (click)="addNewProject(newProjectName)" [disabled]="newProjectName.length < 3">
+                    Add new project <mat-icon matIconPrefix>add</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="ai-project">
+        <button color="accent" mat-raised-button (click)="addNewProjectAi()">
+            Build Your Website With AI  <mat-icon matIconPrefix>create</mat-icon>
+        </button>
+    </div>
+</div>

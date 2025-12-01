@@ -1,0 +1,41 @@
+<span mat-dialog-title>
+    <h2>
+        Choose a template for your site
+    </h2>
+    <div class="templates-filter">
+        <div class="categories">
+            <div class="category-select" [ngClass]="{'selected': this.selectedCategory.slug === category.slug}" (click)="selectCategory(category)" *ngFor="let category of categories">
+                {{category.title}}
+            </div>
+        </div>
+   </div>
+</span>
+<mat-dialog-content class="mat-typography">
+    <div *ngIf="loadingTemplates" class="cloud-loader">
+        <mat-spinner></mat-spinner>
+        <div class="info">
+
+            <div class="building-text">Loading templates…</div>
+        </div>
+    </div>
+    <div *ngIf="!loadingTemplates" class="templates-container">
+
+       <div class="templates">
+            <div class="template" *ngFor="let template of filterdTemplates">
+                <div class="img-preview">
+                    <img [src]="template.featured_image" />
+                </div>
+                <div class="actions">
+                    <button mat-stroked-button color="default" (click)="previewTemplate(template)">Preview</button>
+                    <button mat-flat-button color="primary" (click)="selectTemplate(template)">Select</button>
+                </div>
+                <div class="title">
+                    {{template.title}}
+                </div>
+            </div>
+       </div>
+    </div>
+ </mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

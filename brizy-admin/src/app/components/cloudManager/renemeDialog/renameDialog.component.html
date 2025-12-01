@@ -1,0 +1,19 @@
+<span mat-dialog-title>
+    <h2>Rename project: {{data.project.name}}</h2>
+</span>
+<mat-dialog-content class="mat-typography">
+    <div *ngIf="loading" class="cloud-loader">
+        <mat-spinner></mat-spinner>
+    </div>
+    <div class="rename-container">
+        <mat-form-field  appearance="outline">
+            <mat-label>Project name</mat-label>
+            <input [disabled]="data.project.processing" type="text" matInput placeholder="Project name..." [(ngModel)]="projectName">
+        </mat-form-field>
+        <button mat-flat-button color="accent" (click)="saveProjectName()" [disabled]="data.project.processing">Save</button>
+    </div>
+
+ </mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

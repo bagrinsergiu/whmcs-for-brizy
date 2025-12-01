@@ -18,42 +18,113 @@ use WHMCS\Module\Addon\Brizy\Common\Helpers;
 function brizy_config()
 {
 
-    $apiTokenDescription = '<span style="color:#ff6000"><a style="text-decoration: underline; color:#ff6000" target="_blank" href="https://www.brizy.io/solutions-for-hosts-and-resellers#lets-talk">Contact us</a> to get the API token in order to provide upgrade to PRO for your costumers, and activate White Label options.</span> <br/>';
+    $cloudValidationString = Helpers::validateBrizyCloud();
 
-    $apiToken = trim(Settings::get('api_token'));
+    $fields = [
 
-    if ($apiToken) {
+        'cloud_title' => [
+            'FriendlyName' => '',
+            'Description' => '<b>Brizy Cloud settings</b>'
+        ],
+        'cloud_access_key' => [
+            'FriendlyName' => 'Brizy Cloud - API access key',
+            'Type' => 'text',
+            'Size' => '250',
+            'Default' => '',
+            'Description' => '',
+        ],
+        'cloud_public_partner_id' => [
+            'FriendlyName' => 'Brizy Cloud - public partner ID',
+            'Type' => 'text',
+            'Size' => '250',
+            'Default' => '',
+            'Description' => '',
+        ],
+        'cloud_wl_dashboard_domain' => [
+            'FriendlyName' => 'Brizy Cloud - dashboard domain path',
+            'Type' => 'text',
+            'Size' => '250',
+            'Default' => '',
+            'Description' => 'Path to your white label sitebuilder e.g.: https://example.examplesitebuilder.online/',
+        ],
+        'cloud_wl_previews_domain' => [
+            'FriendlyName' => 'Brizy Cloud - previews domain',
+            'Type' => 'text',
+            'Size' => '250',
+            'Default' => '',
+            'Description' => 'Path to the domain under which your pages will be available e.g.: https://examplesitebuilder.live',
+        ],
+        'cloud_wl_dashboard_ai' => [
+            'FriendlyName' => 'Brizy Cloud - AI builder path',
+            'Type' => 'text',
+            'Size' => '250',
+            'Default' => '',
+            'Description' => 'Path to your white label AI sitebuilder e.g.: https://ai.examplesitebuilder.online/',
+        ],
+        'cloud_wl_google_maps_api_key' => [
+            'FriendlyName' => 'Brizy Cloud - Google maps API key',
+            'Type' => 'text',
+            'Size' => '250',
+            'Default' => '',
+            'Description' => '',
+        ],
+        'cloud_website_builder_name' => [
+            'FriendlyName' => 'Brizy Cloud - Website builder name',
+            'Type' => 'text',
+            'Size' => '250',
+            'Default' => 'Website builder',
+            'Description' => 'The name that will be displayed in the product menu',
+        ],
+        'cloud_website_builder_logo_path' => [
+            'FriendlyName' => 'Brizy Cloud - Path to website builder logo (optional)',
+            'Type' => 'text',
+            'Size' => '250',
+            'Default' => '',
+            'Description' => 'Logo that will display in the product menu',
+        ],
+        'cloud_validation' => [
+            'FriendlyName' => 'Connections status',
+            'Description' => $cloudValidationString
+        ],
 
-        $apiTokenDescription = '<strong style="color:red">API token is invalid</strong>';
+    ];
+
+    $brizyWordpress = false;
+
+    if ($brizyWordpress) {
+        $apiTokenDescription = '<span style="color:#ff6000"><a style="text-decoration: underline; color:#ff6000" target="_blank" href="https://www.brizy.io/solutions-for-hosts-and-resellers#lets-talk">Contact us</a> to get the API token in order to provide upgrade to PRO for your costumers, and activate White Label options.</span> <br/>';
+
+        $apiToken = trim(Settings::get('api_token'));
+
+        if ($apiToken) {
+
+            $apiTokenDescription = '<strong style="color:red">API token is invalid</strong>';
 
 
-        if (Helpers::validateApiConnection()) {
-            $apiTokenDescription = '<strong style="color:green">API token is valid</strong>';
+            if (Helpers::validateApiConnection()) {
+                $apiTokenDescription = '<strong style="color:green">API token is valid</strong>';
 
+            }
         }
-    }
 
-    $downloadTokenDescription = '<span style="color:#ff6000"><a style="text-decoration: underline; color:#ff6000" target="_blank" href="https://www.brizy.io/solutions-for-hosts-and-resellers#lets-talk">Contact us</a> to get the download token in order to provide upgrade to PRO for your costumers, and activate White Label options.</span><br/>';
-    $downloadToken = trim(Settings::get('brizy_pro_download_token'));
+        $downloadTokenDescription = '<span style="color:#ff6000"><a style="text-decoration: underline; color:#ff6000" target="_blank" href="https://www.brizy.io/solutions-for-hosts-and-resellers#lets-talk">Contact us</a> to get the download token in order to provide upgrade to PRO for your costumers, and activate White Label options.</span><br/>';
+        $downloadToken = trim(Settings::get('brizy_pro_download_token'));
 
-    if ($downloadToken) {
+        if ($downloadToken) {
 
-        $downloadTokenDescription = '<strong style="color:red">Download token is invalid</strong></br>';
+            $downloadTokenDescription = '<strong style="color:red">Download token is invalid</strong></br>';
 
-        if (Helpers::validateDownloadToken()) {
-            $downloadTokenDescription = '<strong style="color:green">Download token is valid</strong></br>';
+            if (Helpers::validateDownloadToken()) {
+                $downloadTokenDescription = '<strong style="color:green">Download token is valid</strong></br>';
 
+            }
         }
-    }
 
-    return [
-
-        'name' => 'Brizy',
-        'description' => 'Brizy for WHMCS extends the capabilities of WHMCS to remotely install WordPress, Brizy or the Brizy PRO version on shared hosting accounts. Both when creating new orders and using a specially prepared installer for existing customers.',
-        'author' => 'DOTINUM.COM',
-        'language' => 'english',
-        'version' => '1.05',
-        'fields' => [
+        $fieldsWp = [
+            'wp_title' => [
+                'FriendlyName' => '',
+                'Description' => '<b>Brizy Wordpress settings</b>'
+            ],
             'product_name_free' => [
                 'FriendlyName' => 'Product names for the FREE version',
                 'Type' => 'text',
@@ -130,8 +201,8 @@ function brizy_config()
                 'Size' => '9000',
                 'Default' => '.brz-theme-selector .theme-count {
     background: #57a10a !important;
-}
-',
+    }
+    ',
                 'Description' => 'Your css styles, to personalize theme selector',
             ],
             'generate_new_licenses_automaticaly' => [
@@ -140,24 +211,23 @@ function brizy_config()
                 'Description' => 'When this option is enabled, if there are no free licenses, a new one is generated when the order is placed.',
                 'Default' => 'yes'
             ],
-        ]
-    ];
-}
+        ];
 
-/**
- * Config validation
- *
- * @param array $params
- * @return void
- */
-function brizy_config_validate($params) {
-    $valid = false;
-
-    if (!$valid) {
-        throw new InvalidConfiguration('API Key is invalid.');
+        $fields = array_merge($fields, $fieldsWp);
     }
-}
 
+
+    $configArray = [
+        'name' => 'Brizy',
+        'description' => 'Brizy enhances WHMCS by enabling lightning-fast website creation and seamless one-click deployment directly to your customers’ hosting accounts.',
+        'author' => 'DOTINUM.COM',
+        'language' => 'english',
+        'version' => '2.00',
+        'fields' => $fields
+    ];
+
+    return $configArray;
+}
 
 /**
  * Activate.
@@ -168,8 +238,25 @@ function brizy_config_validate($params) {
  */
 function brizy_activate()
 {
-    // Create custom tables and schema required by your module
+
     try {
+
+
+        if (!Capsule::schema()->hasTable('brizy_product_settings')) {
+
+            Capsule::schema()
+                ->create(
+                    'brizy_product_settings',
+                    function ($table) {
+                        $table->increments('id');
+                        $table->integer('product_id');
+                        $table->string('field_name');
+                        $table->string('field_value');
+                        $table->dateTime('created_at')->useCurrent();
+                        $table->dateTime('updated_at');
+                    }
+                );
+        }
 
         if (!Capsule::schema()->hasTable('brizy_licenses')) {
 
@@ -273,29 +360,32 @@ function brizy_output($vars)
     echo $response;
 }
 
-/**
- * Admin Area Sidebar Output.
- *
- * Used to render output in the admin area sidebar.
- *
- * @param array $vars
- *
- * @return string
- */
-function brizy_sidebar($vars)
-{
-    $modulelink = $vars['modulelink'];
 
-    $sidebar =
-        '
-    <ul class="menu">
-         <li><a href="' . $modulelink . '">Licenses management</a></li>
+// Disabled sidebar (WP) for now
 
-    </ul>
-    ';
+// /**
+//  * Admin Area Sidebar Output.
+//  *
+//  * Used to render output in the admin area sidebar.
+//  *
+//  * @param array $vars
+//  *
+//  * @return string
+//  */
+// function brizy_sidebar($vars)
+// {
+//     $modulelink = $vars['modulelink'];
 
-    return $sidebar;
-}
+//     $sidebar =
+//         '
+//     <ul class="menu">
+//          <li><a href="' . $modulelink . '">Licenses management</a></li>
+
+//     </ul>
+//     ';
+
+//     return $sidebar;
+// }
 
 /**
  * Client Area Output.

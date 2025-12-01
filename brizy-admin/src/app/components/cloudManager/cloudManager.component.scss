@@ -1,0 +1,126 @@
+.panel-menu {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: flex;
+    margin: 15px 0;
+    padding: 15px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .filters {
+
+    }
+    .members-panel {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+}
+
+.bottom-menu {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    padding: 15px;
+
+    gap: 15px;
+    flex-wrap: wrap;
+
+    .empty-project {
+        display: flex;
+        align-items: baseline;
+        gap: 15px;
+
+        > button {
+            height: 56px;
+        }
+
+        mat-form-field {
+            margin-top: 25px;
+            width: auto;
+            flex: 1;
+
+        }
+    }
+
+
+
+}
+
+.ai-project {
+    text-align: center;
+    > button {
+        height: 56px;
+    }
+}
+
+.projects {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 200px;
+    flex-wrap: wrap;
+    background: #00000014;
+    padding: 15px;
+    border-radius: 5px;
+
+
+    .project {
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        border: 2px solid #0000002e;
+        flex-wrap: wrap;
+
+        transition: all cubic-bezier(0.075, 0.82, 0.165, 1);
+        &:hover {
+            border-color: #00000073;
+        }
+        .project-icon {
+            img {
+                height: 50px;
+                border-radius: 3px;
+            }
+        }
+
+        .project-details {
+            .project-name {
+                font-weight: bold;
+                font-size: 18px;
+            }
+        }
+
+        .project-actions {
+            margin-left: auto;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            gap: 15px;
+        }
+
+        .project-desc {
+            a {
+                font-size: 14px;
+            }
+        }
+    }
+
+    .no-projects {
+        height: 100%;
+        position: absolute;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        text-align: center;
+        color: #ccccce;
+    }
+}

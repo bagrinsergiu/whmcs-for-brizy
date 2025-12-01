@@ -1,0 +1,62 @@
+{
+    "themeSelector": {
+        "header" : "Choose your website",
+        "subHeader" : "Select one of the premade websites to be auto installed on your hosting account",
+        "all" : "All",
+        "free" : "Free",
+        "pro" : "Pro",
+        "allCategories" : "All Categories",
+        "livePreview" : "Live Preview",
+        "select" : "Select",
+        "messages" : {
+            "themSelectConfirmation" : "The \"{name}\" template has been selected`",
+            "themeSelectFailed" : "Failed to set the template, try again in a while...",
+            "themSelectProRestricted" : "At the moment you can't choose a template from the pro version. After installation there will be an option to upgrade to the PRO version."
+        }
+    },
+    "installer": {
+        "loadingData" : "Loading data...",
+        "titlePartName" : "Installer",
+        "description":" To Install Wordpress with {pluginName} or {pluginName} Pro click below",
+        "startButton" : "Start installing {pluginName}",
+        "installationModal" : {
+            "title": "{pluginName} Installer",
+            "initalDescription": "Click below to start the installation...",
+            "successDescription" : "The installation was successful",
+            "successDescriptionWordpressPart": ", wait a moment for the e-mail with the access data to the wordpress",
+            "failedDescription" : "The installation failed, please try again in a minute or use installation via FTP.",
+            "advencedInstalationDescripion" : "Advanced installation options:",
+            "wordpressTitle" : "Wordpress installation",
+            "detectedWordpress" : "We have detected that wordpress is already installed",
+            "brizyTitle" : "{pluginName} plugin installation",
+            "detectedBrizy" : "We have detected that {pluginName} Plugin is already installed",
+            "brizyProTitle" : "{pluginName} PRO plugin installation",
+            "detectedBrizyPro" : "We have detected that {pluginName} PRO Plugin is already installed",
+            "ftpOptionDescription" : "Installation via FTP",
+            "host": "Host",
+            "port": "Port",
+            "username" : "Username",
+            "password" : "Password",
+            "path" : "Initial directory",
+            "databasePassword" : "Database password",
+            "databaseName" : "Database name",
+            "databaseUser" : "Database user",
+            "advencedInstalationOptionDescription" : "Advanced installation",
+            "startButton" : "Start",
+            "startButtonAdvencedPart" : "advenced",
+            "startButtonFtpPart" : "FTP",
+            "startButtonInstallationPart" : "installation",
+            "closeButton" : "Close"
+        },
+        "confirmInstallation" : "Are you sure you want to run the installation? Files in your root directory may be overwritten.",
+        "installationSteps" : {
+            "databaseCheck" : "Checking database",
+            "userPrivilages" : "Checking user and privileges",
+            "uploadingScript" : "Uploading the installation script",
+            "runningScirpt" : "Running script",
+            "ftpConnectionTest" : "Testing FTP connection"
+        },
+        "initError": "<strong>Installer: </strong>The installer cannot be used at this time..."
+    }
+
+}

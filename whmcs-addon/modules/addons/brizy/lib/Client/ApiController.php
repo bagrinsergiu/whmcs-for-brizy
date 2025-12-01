@@ -45,16 +45,21 @@ class ApiController extends DefaultApiController
             ->first();
 
             if (!$service || !Helpers::checkIfCanInstallBrizy($this->serviceId)) {
-                $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']);
+                $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted'] . ' (#1)');
             }
 
             if (!$currentUser->user()) {
-                $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']);
+                $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']  . ' (#2)');
             }
 
-            $this->cpanelInstaller = new CpanelInstaller($service);
+            try {
+                $this->cpanelInstaller = new CpanelInstaller($service);
+            } catch (\Exception $e) {
+                $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']  . ' - ' . $e->getMessage());
+            }
+
         } else {
-            $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']);
+            $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']  . ' (#4)');
         }
     }
 
@@ -70,7 +75,7 @@ class ApiController extends DefaultApiController
             $this->respond();
         }
 
-        $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted'], 403);
+        $this->respondWithError(Translations::$_['client']['api']['repsonse']['accessRestricted']. ' (#5)' , 403);
     }
 
     /**

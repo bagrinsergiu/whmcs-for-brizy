@@ -1,0 +1,170 @@
+<h2 mat-dialog-title>
+    Generate amazing websites with AI
+</h2>
+<mat-dialog-content class="mat-typography">
+
+    <div *ngIf="buildingWebsite" class="cloud-loader">
+
+        <div class="info">
+            <div class="warning">Don't close your browser, your site is just being created</div>
+            <div class="building-text">{{aiProjectBuildingText}}</div>
+        </div>
+
+        <mat-spinner></mat-spinner>
+    </div>
+    <mat-stepper linear #stepper labelPosition="bottom">
+        <mat-step [completed]="steps.name.completed">
+            <div class="site-name">
+                <ng-template matStepLabel>Site name</ng-template>
+                <div class="site-name-input">
+                    <strong> Enter business name or find it on Google </strong>
+                    <div class="business-form">
+                        <mat-form-field  appearance="outline">
+                            <mat-icon matIconPrefix [ngClass]="{'map-selected': selectedPlace}">flag</mat-icon>
+
+                            <input  type="text"
+                            matInput
+
+                            [formControl]="searchControl"
+                            [matAutocomplete]="auto"
+                            placeholder="Enter site name" [(ngModel)]="businessName">
+                            <mat-spinner style="margin-right:15px" *ngIf="isLoading" diameter="20" matSuffix></mat-spinner>
+                            <mat-autocomplete [displayWith]="autocompleteDisplayFn" #auto="matAutocomplete" (optionSelected)="onPlaceSelected($event)">
+                                <mat-option *ngFor="let option of this.places | async" [value]="option">
+                                    <div class="autocomplete-option">
+                                        <div><mat-icon matIconPrefix>place</mat-icon><strong>{{ option.text}}</strong></div>
+                                        <div>
+                                            <span>{{ option.secondaryText}}</span>
+                                        </div>
+
+                                    </div>
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                        <mat-form-field  class="lang-select" appearance="outline">
+                            <mat-select  [(value)]="language">
+                                <mat-option *ngFor="let lang of languages" [value]="lang.code">
+                                <img class="flag-lang"
+                                    [src]="'modules/addons/brizy/apps/brizy-admin/assets/flags/' + lang.code + '.svg'"
+                                    [alt]="lang.name"
+                                    style="vertical-align: middle"
+                                />
+                                </mat-option>
+                                <mat-select-trigger>
+                                    <img class="flag-lang"
+                                      [src]="'modules/addons/brizy/apps/brizy-admin/assets/flags/' + language + '.svg'"
+                                      [alt]="language"
+                                      style="vertical-align: middle"
+                                    />
+                                  </mat-select-trigger>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+
+                </div>
+
+                <div class="offer-ideas-box">
+                    <div *ngIf="!offerIdeasStatus" class="offer-ideas-button-container">
+                        Don’t have a name yet?
+                        <button mat-raised-button color="default" (click)="offerIdeas()">Offer some ideas</button>
+                    </div>
+
+                    <div *ngIf="offerIdeasStatus">
+
+                        <strong>A brief description of your business</strong>
+
+                        <mat-form-field  appearance="outline">
+                            <textarea [disabled]="ideasLoading" type="text" matInput placeholder="Brief description..." [(ngModel)]="offerIdeasDescription"></textarea>
+                        </mat-form-field>
+                        <button mat-raised-button color="default" [disabled]="ideasLoading" (click)="offerIdeasSubmit()">Submit</button>
+
+                        <mat-progress-bar *ngIf="ideasLoading" mode="indeterminate"></mat-progress-bar>
+
+                        <div class="ideas-container" *ngIf="(!ideasLoading && ideas.length > 0)">
+                            <div class="ideas-title">Choose one of the suggested names:</div>
+                            <div class="ideas-list" >
+                                <span class="idea" (click)="selectIdea(idea)" *ngFor="let idea of ideas">{{idea}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="step-button-container">
+                <button [disabled]="!steps.name.completed" mat-raised-button color="primary" (click)="stepper.next()" class="">Next step</button>
+            </div>
+            <div class="latest-ai-projects">
+                <div class="title">Your recently generated projects in this browser</div>
+                <div class="hint">Open the AI project for editing or remove unnecessary</div>
+                <div class="projects-list">
+                    <div *ngIf="aiLocalProjects.length === 0">No generated AI projects to show....</div>
+                    <div *ngFor="let aiLocalProject of aiLocalProjects" (click)="openAiProjectEditDialog(aiLocalProject.title, aiLocalProject.id, aiLocalProject.url)">{{aiLocalProject.title}} <button mat-icon-button color="accent" (click)="removeAiProjectToStorage(aiLocalProject.id); $event.stopPropagation()"><mat-icon>delete</mat-icon></button></div>
+                </div>
+
+            </div>
+
+        </mat-step>
+
+        <mat-step [completed]="steps.industry.completed">
+            <ng-template matStepLabel>Industry</ng-template>
+
+            <div class="industry-select">
+                <strong>Pick an industry for your website:</strong>
+                <mat-form-field appearance="outline">
+                    <mat-label>Industry</mat-label>
+                    <mat-select [(ngModel)]="industry">
+                        <mat-option *ngFor="let industryString of industries" [value]="industryString">
+                            {{industryString}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+
+            <div class="step-button-container">
+                <button [disabled]="!steps.name.completed || !steps.industry.completed" mat-raised-button color="primary" (click)="stepper.next()" class="">Next step</button>
+            </div>
+        </mat-step>
+        <mat-step [completed]="steps.info.completed">
+            <ng-template matStepLabel>Info</ng-template>
+            <div class="additional-info">
+
+                <div>
+                    <div class="form-title"><strong>Business Description</strong> <span class="hint">optional</span></div>
+                    <mat-form-field  appearance="outline">
+                        <textarea type="text" matInput placeholder="Add a short business description, so the AI can write better copy" [(ngModel)]="description"></textarea>
+                    </mat-form-field>
+                </div>
+                <div class="vertical-inputs">
+                    <div>
+                        <div class="form-title"><strong>Phone no.</strong> <span class="hint">optional</span></div>
+                        <mat-form-field  appearance="outline">
+                            <input type="text" matInput placeholder="1-212-1234567" [(ngModel)]="phone">
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <div class="form-title"><strong>Email</strong> <span class="hint">optional</span></div>
+                        <mat-form-field  appearance="outline">
+                            <input type="text" matInput placeholder="name@domain.com" [(ngModel)]="email">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="step-button-container">
+                <button [disabled]="!steps.name.completed || !steps.industry.completed || !steps.info.completed" mat-raised-button color="primary" (click)="buildWebsite()">Build Website</button>
+            </div>
+        </mat-step>
+    </mat-stepper>
+
+    <div>
+
+
+    </div>
+
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

@@ -47,7 +47,7 @@
         <div class="modal brizzy-installer-modal " [ngClass]="{'show':  installationModal && !loadingData}">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header d-flex justify-content-betwee">
                         <h5 class="modal-title" > {{ 'installer.installationModal.title' | translate: {pluginName: initData.wl.bPluginName} }}</h5>
                         <button [disabled]="installationStatus === 1" (click)="closeInstallationModal()" type="button"
                             class="close" data-dismiss="modal" aria-label="Close">
@@ -156,9 +156,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <div class="form-group form-check advanced-options-footer">
-                            <input [(ngModel)]="advanced.active" type="checkbox" class="form-check-input"
-                                id="advencedInstallation">
+                        <div class="advanced-options-footer">
+                            <input [(ngModel)]="advanced.active" type="checkbox" id="advencedInstallation">
                             <label class="form-check-label" for="advencedInstallation">{{ 'installer.installationModal.advencedInstalationOptionDescription'| translate }}</label>
                         </div>
                         <button type="button" [disabled]="installationStatus === 1" (click)="closeInstallationModal()"

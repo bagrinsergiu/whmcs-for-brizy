@@ -1,0 +1,30 @@
+.action-buttons {
+    display: flex;
+    flex: 1;
+    margin-left: 15px;
+    gap: 15px;
+}
+
+.ai-editor-note {
+    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.cloud-loader {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+
+    .warning {
+        font-weight: bold;
+    }
+    .info {
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+}
